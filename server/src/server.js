@@ -40,6 +40,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Serve Project Report HTML
+app.get('/report', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../PROJECT_REPORT.html'));
+});
+
 // Serve frontend in production
 const clientDistPath = path.join(__dirname, '../../client/dist');
 app.use(express.static(clientDistPath));
