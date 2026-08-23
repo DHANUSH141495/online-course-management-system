@@ -1,8 +1,8 @@
-# 🎓 Coursify — Online Course Management System (Project 2)
+# 🎓 Coursify — Online Course Management & AI-Proctored E-Learning System
 
-A production-grade, human-crafted full-stack **Online Course Management System (E-Learning Platform)** engineered for final project evaluations, technical vivas, and placements. 
+A production-grade, human-crafted full-stack **Online Course Management System & Certification Platform** engineered for capstone presentations, technical vivas, and placements.
 
-Developed by **Dhanush** with role-based access control (**Student** & **Admin**), searchable course catalog, video classroom with interactive progress tracking, in-lesson personal study scratchpad, concept-check quizzes, course wishlist bookmarks, verified completion certificates, course management CRUD, and an interactive REST API explorer.
+Developed by **Dhanush** with role-based access control (**Student** & **Admin**), **107 industry courses**, sequential learning enforcement, AI-proctored anti-cheating certification examinations, 5 dynamic UI themes, in-lesson study scratchpad, verifiable certificates, course management CRUD, and an interactive REST API explorer.
 
 ---
 
@@ -28,8 +28,8 @@ Visit the app in your browser: **[http://localhost:3000](http://localhost:3000)*
 
 | Role | Name | Email | Password | Access Capabilities |
 |---|---|---|---|---|
-| **👨‍🎓 Student** | **Dhanush** | `dhanush@gmail.com` | `Student@123` | Browse catalog, bookmark wishlist, take personal study notes, complete quizzes, claim verifiable certificates |
-| **👨‍💼 Admin** | **Admin Master** | `admin@coursify.com` | `Admin@123` | View analytics, create/edit/delete courses, monitor student progress, toggle user roles |
+| **👨‍🎓 Student** | **Dhanush** | `dhanush@gmail.com` | `Student@123` | Browse 107 courses, bookmark wishlist, take study notes, complete quizzes, take AI-proctored exams, claim verified certificates |
+| **👨‍💼 Admin** | **Admin Master** | `admin@coursify.com` | `Admin@123` | View real-time analytics, create/edit/delete courses, monitor enrollments, toggle user roles |
 
 > 💡 **1-Click Demo Login**: Click the **"⚡ Demo Student"** or **"⚡ Demo Admin"** buttons in the navigation bar to login instantly without typing!
 
@@ -37,182 +37,146 @@ Visit the app in your browser: **[http://localhost:3000](http://localhost:3000)*
 
 ## 🌟 Standout "Human-Crafted" Features
 
-1. **Interactive Video Classroom**:
-   - 16:9 responsive video player with markdown code references.
-   - **My Study Scratchpad**: Students can write and auto-save personal notes per lesson into the database.
-   - **Knowledge Check Quiz**: Instant concept-check multiple-choice questions with answer explanations.
-   - **Live Progress Engine**: Toggleable lesson checkboxes that dynamically recalculate percentage (`25% → 50% → 75% → 100%`) and trigger confetti celebrations on completion.
-2. **Verifiable Certificates**:
-   - High-resolution modal certificate issued to **Dhanush** with a verification ID and printable PDF styling.
-3. **Course Wishlist / Bookmarking**:
-   - Save favorite courses with instant bookmarking to a dedicated dashboard wishlist tab.
-4. **Administrator Suite**:
-   - Platform KPI summary (Total Students, Active Courses, Enrollments, Average Progress).
-   - Course Management CRUD with multi-module syllabus builders.
-   - Real-time student progress monitor table.
-5. **Interactive REST API Explorer**:
-   - `/api-docs` page with live endpoint execution directly in the browser.
+### 🛡️ 1. AI-Proctored Anti-Cheating Examination Suite
+- **Webcam & Audio Live Stream**: Requests browser permissions and mounts a live video feed in the exam room.
+- **Tab-Switch & Blur Detection**: Intercepts `visibilitychange` and window blur events with procedural audio alerts.
+- **3-Strike Malpractice Policy**: Flashes high-visibility violation warnings; on the 3rd violation, the exam auto-terminates and disqualifies the student.
+- **100% Anti-Copy & Hotkey Block**: Prevents clipboard copies, cuts, pastes, right-clicks (`contextmenu`), and shortcut keys (`Ctrl+C`, `Ctrl+V`, `F12`).
+- **535 Seeded Exam Questions**: 5 unique certification questions per course across all 107 courses.
+
+### 🔒 2. Sequential Learning Enforcement & Anti-Skipping
+- Prevents skipping lessons: Module 2 unlocks only after Module 1 is completed; Module 3 unlocks only after Module 2 is completed.
+- Locked lessons display a 🔒 padlock icon.
+- Unlocks the **Final AI-Proctored Exam** only upon reaching 100% course completion.
+
+### 🎨 3. Five Custom Dynamic Themes (Navbar Switcher)
+1. 🌌 **Midnight Cyber** *(Default)*: Electric Indigo (`#6366f1`) & Cyan (`#06b6d4`).
+2. 🌲 **Matrix Emerald**: Deep Emerald (`#10b981`) & Lime Jade (`#34d399`).
+3. 🔮 **Cosmic Amethyst**: Vivid Violet (`#a855f7`) & Fuchsia (`#ec4899`).
+4. 🌊 **Oceanic Sapphire**: Sapphire Blue (`#0284c7`) & Sky Blue (`#38bdf8`).
+5. 🌅 **Sunset Ember**: Coral Crimson (`#f43f5e`) & Warm Amber (`#fb923c`).
+- *Stored in `localStorage` for instant session persistence.*
+
+### 📚 4. 107 Comprehensive Seeded Courses
+- Spanning 8 categories:
+  - Core Programming & Data Structures (14)
+  - Full-Stack Web Development (14)
+  - Artificial Intelligence, ML & Data Science (14)
+  - Cloud Computing & DevOps (13)
+  - Databases, SQL & Distributed Systems (13)
+  - Mobile App Development (13)
+  - Cybersecurity & Ethical Hacking (13)
+  - Software Testing, QA & Automation (13)
+
+### ✍️ 5. In-Lesson Study Scratchpad & Concept Quizzes
+- **Auto-Saving Study Notes**: Students write custom code notes per module directly stored in SQLite (`lesson_notes`).
+- **Knowledge Check Quizzes**: Interactive multiple-choice quizzes with instant answer rationale.
+
+### 📜 6. Verifiable Certificate of Completion
+- Automatically issued with **Dhanush** as the student name, instructor signature, completion date, and unique verification ID (e.g. `CERT-DHANUSH-11-8398`). Includes full canvas/PDF print support.
 
 ---
 
 ## 🏗️ Architecture & Technology Stack
 
 ```text
-Browser (Student / Admin)
-         ↓  (JWT Bearer Authorization in HTTP Headers)
-Frontend: React 18 + Vite + Vanilla CSS Glassmorphism Design System
-         ↓  (REST API JSON Requests)
-Backend:  Node.js + Express.js (MVC Pattern, JWT Auth, bcryptjs)
-         ↓  (Prepared Statements)
-Database: Relational SQLite (better-sqlite3 with WAL mode) / MySQL & PostgreSQL DDL Ready
-```
-
-- **Frontend**: React 18, Vite, `lucide-react`, `canvas-confetti`, Custom Vanilla CSS tokens (Dark theme, glassmorphism, responsive grid).
-- **Backend**: Node.js, Express.js, `jsonwebtoken`, `bcryptjs`, `better-sqlite3`, `cors`, `morgan`.
-- **Database Schema**: Relational database DDL available in [`server/schema.sql`](file:///c:/Users/141dh/OneDrive%20-%20Sri%20Venkateshwara%20College%20of%20engineering/Documents/project%202%20for%20congervence/server/schema.sql).
-
----
-
-## 🗄️ Relational Database Schema
-
-```mermaid
-erDiagram
-    USERS ||--o{ ENROLLMENTS : "enrolls in"
-    USERS ||--o{ BOOKMARKS : "bookmarks"
-    USERS ||--o{ LESSON_NOTES : "writes notes for"
-    USERS ||--o{ REVIEWS : "writes"
-    COURSES ||--o{ ENROLLMENTS : "has"
-    COURSES ||--o{ LESSONS : "contains"
-    COURSES ||--o{ BOOKMARKS : "saved in"
-    CATEGORIES ||--o{ COURSES : "categorizes"
-    ENROLLMENTS ||--o{ LESSON_PROGRESS : "tracks"
-    LESSONS ||--o{ LESSON_PROGRESS : "for"
-    LESSONS ||--o{ LESSON_NOTES : "attached to"
-
-    USERS {
-        int id PK
-        string name
-        string email UK
-        string password_hash
-        string role "student | admin"
-    }
-
-    COURSES {
-        int id PK
-        string title
-        string description
-        string instructor
-        int category_id FK
-        string level
-        string duration
-        float rating
-    }
-
-    LESSONS {
-        int id PK
-        int course_id FK
-        string title
-        string duration
-        string video_url
-        string content_markdown
-        int order_index
-    }
-
-    ENROLLMENTS {
-        int id PK
-        int user_id FK
-        int course_id FK
-        int progress_percent
-        string status "active | completed"
-    }
-
-    LESSON_NOTES {
-        int id PK
-        int user_id FK
-        int lesson_id FK
-        string note_text
-        datetime updated_at
-    }
-
-    BOOKMARKS {
-        int id PK
-        int user_id FK
-        int course_id FK
-    }
+├── client/                     # Frontend (React 18 + Vite)
+│   ├── src/
+│   │   ├── components/         # Navbar (Theme Switcher), Footer, Modals, Cards
+│   │   ├── context/            # AuthContext (JWT, User state, Toasts)
+│   │   ├── pages/
+│   │   │   ├── CatalogPage.jsx          # Search, Category Pills, Wishlist
+│   │   │   ├── CourseDetailPage.jsx     # Syllabus, Enroll, Prerequisites
+│   │   │   ├── StudentDashboard.jsx     # Progress Stats, Wishlist, Exams
+│   │   │   ├── LearningRoom.jsx         # Video Player, Sequential Locks, Scratchpad
+│   │   │   ├── ExamProctorRoom.jsx      # AI Webcam Proctor, 3-Strike Tab-Switch Guard
+│   │   │   ├── AdminDashboard.jsx       # Platform KPIs, CRUD, Progress Monitor
+│   │   │   └── ApiDocsPage.jsx          # Live REST API Explorer
+│   │   └── styles/index.css    # 5 CSS Data-Theme Tokens & Design System
+│
+├── server/                     # Backend (Node.js + Express)
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── db.js                    # SQLite Schema & DB Initialization
+│   │   │   ├── seed_100_courses.js      # 107 Seeded Courses
+│   │   │   └── seed_exam_questions.js   # 535 Seeded Exam Questions
+│   │   ├── controllers/        # Auth, Courses, Enrollments, Admin, Exam
+│   │   ├── middleware/         # JWT Auth, Role-Based Access Control (Admin/Student)
+│   │   ├── routes/             # REST Route definitions
+│   │   └── server.js           # Express App & Production Static File Handler
+│   ├── schema.sql              # Relational DDL Script for DB Presentation
+│   └── test_all_endpoints.js   # 17-Endpoint Automated Verification Suite
+│
+└── package.json                # Unified Root Build & Deployment Scripts
 ```
 
 ---
 
-## 🔗 REST API Endpoints
+## 🌐 Full Cloud Deployment Guide
 
-### 🔐 Authentication (`/api/auth`)
-- `POST /api/auth/register` — Register student or admin account
-- `POST /api/auth/login` — Login with email/password, returns JWT token + user profile
-- `GET /api/auth/me` — Fetch current user profile (Bearer JWT)
+You can deploy this application to any cloud platform in under 3 minutes for free:
 
-### 📚 Courses & Wishlist (`/api/courses`)
-- `GET /api/courses` — Search, filter by category/level, and sort courses
-- `GET /api/courses/categories` — List all categories with course counts
-- `GET /api/courses/my/bookmarks` — List logged-in student's saved wishlist courses
-- `POST /api/courses/:id/bookmark` — Toggle save/remove course from wishlist
-- `GET /api/courses/:id` — Course syllabus, instructor info, and reviews
-- `POST /api/courses` *(Admin)* — Create course with syllabus
-- `PUT /api/courses/:id` *(Admin)* — Update course details
-- `DELETE /api/courses/:id` *(Admin)* — Delete course & cascade data
-
-### 🎓 Classroom & Notes (`/api/enrollments`)
-- `POST /api/enrollments` — Enroll current user in a course
-- `GET /api/enrollments/my` — Get student dashboard with progress stats
-- `GET /api/enrollments/courses/:courseId/learn` — Get classroom video & modules
-- `POST /api/enrollments/courses/:courseId/lessons/:lessonId/complete` — Toggle lesson complete
-- `GET /api/enrollments/lessons/:lessonId/notes` — Get student's private lesson notes
-- `POST /api/enrollments/lessons/:lessonId/notes` — Save student's private lesson notes
-
-### 🛡️ Admin Suite (`/api/admin`)
-- `GET /api/admin/stats` — Platform analytics overview
-- `GET /api/admin/enrollments` — All student enrollment records
-- `GET /api/admin/users` — User directory with role status
-- `PUT /api/admin/users/:id/role` — Promote/demote student or admin
+### Option A: Render (Recommended — 1-Click Full-Stack)
+1. Push this repository to your **GitHub** account.
+2. Sign in to **[Render.com](https://render.com)**.
+3. Click **"New +"** → **"Web Service"** → Connect your GitHub repository.
+4. Configure:
+   - **Environment**: `Node`
+   - **Build Command**: `npm run build`
+   - **Start Command**: `npm start`
+5. Under **Environment Variables**, add:
+   - `NODE_ENV` = `production`
+   - `JWT_SECRET` = `your_random_secret_string_here`
+   - `PORT` = `10000`
+6. Click **"Create Web Service"**. Render will build the React frontend and launch the Express server at your custom `https://coursify-xxx.onrender.com` URL!
 
 ---
 
-## 🚀 Step-by-Step Deployment Guide (Free)
-
-### Method 1: Deploy on Render.com (Recommended - Single Unified Full-Stack Service)
-
-1. **Push your code to GitHub**:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: Coursify Full-Stack App by Dhanush"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/coursify.git
-   git push -u origin main
-   ```
-2. **Create a Free Web Service on Render**:
-   - Go to [render.com](https://render.com) and log in with your GitHub.
-   - Click **New +** → **Web Service**.
-   - Select your `coursify` repository.
-   - Set the following settings:
-     - **Name**: `coursify-app`
-     - **Runtime**: `Node`
-     - **Build Command**: `npm run build`
-     - **Start Command**: `npm run start`
-   - Under **Environment Variables**, add:
-     - `PORT`: `5000`
-     - `JWT_SECRET`: `coursify_production_jwt_secret_dhanush_2026`
-     - `NODE_ENV`: `production`
-   - Click **Create Web Service**. Render will automatically build the frontend, package the database, and launch your live site!
+### Option B: Railway
+1. Go to **[Railway.app](https://railway.app)**.
+2. Click **"New Project"** → **"Deploy from GitHub repo"**.
+3. Railway automatically detects `package.json` and runs `npm run build` and `npm start`.
+4. Set `JWT_SECRET` in the Variables tab.
 
 ---
 
-## 💡 Placement Viva & Technical Interview Answers
+### Option C: Self-Hosted VPS (Ubuntu / DigitalOcean / AWS EC2)
+```bash
+# 1. Clone your repo
+git clone <your-repo-url>
+cd <repo-folder>
 
-> **Q: Why did you choose Express and React for this system?**  
-> *"I chose React with Vite on the frontend for declarative UI rendering, fast Hot Module Replacement, and modular state management with Context API. On the backend, Express.js provides a lightweight, non-blocking asynchronous REST architecture with middleware for JWT authentication and role-based access control."*
+# 2. Install & Build
+npm run install:all
+npm run build
 
-> **Q: How are passwords protected and tokens handled?**  
-> *"Passwords are salted and hashed using bcryptjs (10 salt rounds) before database insertion. On authentication, a signed JSON Web Token is generated containing the user's ID, email, and role. The client includes this token in the `Authorization: Bearer <token>` header for subsequent authorized requests."*
+# 3. Run with PM2 Process Manager
+npm install -g pm2
+pm2 start server/src/server.js --name "coursify"
+pm2 save
+pm2 startup
+```
 
-> **Q: How does the progress recalculation engine prevent duplicate or inconsistent progress?**  
-> *"Progress is computed server-side to prevent tampering. When a student toggles a lesson checkbox, the backend updates the `lesson_progress` table and runs an aggregate query `(completed_lessons / total_lessons) * 100`. The resulting percentage is updated in the `enrollments` table. If it reaches 100%, the enrollment status shifts from `active` to `completed`, automatically authorizing certificate generation."*
+---
+
+## 🧪 Automated Endpoint Audit Test
+
+Run the full 17-endpoint audit anytime:
+```bash
+node server/test_all_endpoints.js
+```
+
+All 17 core operations (Auth, Categories, Courses, Bookmarks, Classroom, Notes, AI Proctored Exams, Admin KPIs) will execute and report live status codes.
+
+---
+
+## 🎓 Viva & Technical Defense Highlights
+
+- **JWT Stateless Authentication**: Secure authorization header (`Bearer <token>`) with RBAC authorization middleware protecting admin endpoints with `403 Forbidden`.
+- **Database Normalization**: Clean 3NF relational design across `users`, `courses`, `lessons`, `enrollments`, `lesson_progress`, `lesson_notes`, `bookmarks`, `exam_questions`, and `exam_submissions`.
+- **Anti-Cheating Mechanisms**: Uses HTML5 Page Visibility API (`visibilitychange`), `blur` listeners, `getUserMedia` camera feeds, and hotkey cancellation.
+- **Client Performance**: Built with Vite, zero external UI component libraries, and pure CSS variables for instantaneous 60fps theme transitions.
+
+---
+
+*Engineered with pride by **Dhanush**.*
