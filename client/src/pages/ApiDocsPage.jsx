@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   Code, 
@@ -10,12 +10,15 @@ import {
   Terminal, 
   Sparkles,
   Layers,
-  ChevronRight
+  ChevronRight,
+  RefreshCw,
+  Info
 } from 'lucide-react';
 
 export default function ApiDocsPage() {
-  const { token, authFetch } = useAuth();
+  const { user, token, authFetch } = useAuth();
   const [selectedEndpoint, setSelectedEndpoint] = useState(0);
+  const [editableBody, setEditableBody] = useState('');
   const [apiResponse, setApiResponse] = useState(null);
   const [requestLoading, setRequestLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -28,8 +31,8 @@ export default function ApiDocsPage() {
       desc: 'Register a new student or admin account with validation.',
       auth: false,
       body: {
-        name: 'Dhanush',
-        email: 'dhanush@gmail.com',
+        name: 'Alex Turner',
+        email: `student_${Math.floor(1000 + Math.random() * 9000)}@coursify.com`,
         password: 'Student@123',
         role: 'student'
       }
@@ -72,6 +75,20 @@ export default function ApiDocsPage() {
       path: '/api/courses/1',
       desc: 'Fetch comprehensive course details, syllabus modules, and reviews.',
       auth: false
+    },
+    {
+      group: 'Course Catalog & Syllabus',
+      method: 'POST',
+      path: '/api/courses/1/bookmark',
+      desc: 'Toggle bookmark/wishlist status for a course.',
+      auth: true
+    },
+    {
+      group: 'Course Catalog & Syllabus',
+      method: 'GET',
+      path: '/api/courses/my/bookmarks',
+      desc: 'Get list of courses saved to current student wishlist.',
+      auth: true
     },
     {
       group: 'Course Catalog & Syllabus',
@@ -122,6 +139,23 @@ export default function ApiDocsPage() {
       auth: true
     },
     {
+      group: 'Enrollment & Progress Tracking',
+      method: 'GET',
+      path: '/api/enrollments/lessons/1/notes',
+      desc: 'Fetch student private study notes for a specific lesson.',
+      auth: true
+    },
+    {
+      group: 'Enrollment & Progress Tracking',
+      method: 'POST',
+      path: '/api/enrollments/lessons/1/notes',
+      desc: 'Save student personal study scratchpad notes for a lesson.',
+      auth: true,
+      body: {
+        note_text: 'JVM JIT Compiler compiles frequently executed bytecode to native machine code.'
+      }
+    },
+    {
       group: 'Admin Analytics & Management',
       method: 'GET',
       path: '/api/admin/stats',
@@ -149,6 +183,26 @@ export default function ApiDocsPage() {
 
   const current = endpoints[selectedEndpoint];
 
+  useEffect(() => {
+    if (current.body) {
+      setEditableBody(JSON.stringify(current.body, null, 2));
+    } else {
+      setEditableBody('');
+    }
+    setApiResponse(null);
+  }, [selectedEndpoint]);
+
+  const generateFreshEmail = () => {
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    const freshBody = {
+      name: `Student User ${randomNum}`,
+      email: `student_${randomNum}@coursify.com`,
+      password: 'Student@123',
+      role: 'student'
+    };
+    setEditableBody(JSON.stringify(freshBody, null, 2));
+  };
+
   const handleExecuteRequest = async () => {
     setRequestLoading(true);
     setApiResponse(null);
@@ -158,8 +212,18 @@ export default function ApiDocsPage() {
         method: current.method
       };
 
-      if (current.body && (current.method === 'POST' || current.method === 'PUT')) {
-        options.body = JSON.stringify(current.body);
+      if (editableBody && (current.method === 'POST' || current.method === 'PUT')) {
+        try {
+          options.body = editableBody;
+        } catch (e) {
+          setApiResponse({
+            status: 400,
+            ok: false,
+            data: { message: 'Invalid JSON body syntax in editor.' }
+          });
+          setRequestLoading(false);
+          return;
+        }
       }
 
       const { ok, status, data } = await authFetch(current.path, options);
@@ -186,8 +250,28 @@ export default function ApiDocsPage() {
           <h1 style={{ fontSize: '2rem' }}>REST API Documentation & Explorer</h1>
         </div>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-          Test endpoints in real-time, view request bodies, and inspect relational backend responses.
+          Test all endpoints in real-time with editable JSON payloads and inspect relational backend responses.
         </p>
+
+        {!user && (
+          <div style={{
+            marginTop: '1rem',
+            padding: '0.75rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            background: 'rgba(99, 102, 241, 0.1)',
+            border: '1px solid rgba(99, 102, 241, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            fontSize: '0.85rem',
+            color: '#c7d2fe'
+          }}>
+            <Info size={16} color="var(--accent-primary)" />
+            <span>
+              Tip: Click <strong>"⚡ Demo Student"</strong> or <strong>"⚡ Demo Admin"</strong> in the top navbar to automatically attach Bearer JWT tokens to authenticated requests.
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Explorer Layout */}
@@ -214,7 +298,7 @@ export default function ApiDocsPage() {
               return (
                 <div
                   key={idx}
-                  onClick={() => { setSelectedEndpoint(idx); setApiResponse(null); }}
+                  onClick={() => { setSelectedEndpoint(idx); }}
                   style={{
                     padding: '0.85rem 1rem',
                     borderBottom: '1px solid var(--border-color)',
@@ -283,10 +367,12 @@ export default function ApiDocsPage() {
             </div>
 
             {/* Auth & Headers Meta */}
-            <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)', flexWrap: 'wrap' }}>
               <span>
                 Auth Required: <strong>{current.auth ? (current.role ? `Yes (${current.role} role)` : 'Yes (JWT Bearer)') : 'No (Public)'}</strong>
               </span>
+              <span>•</span>
+              <span>Active Token: <strong>{token ? '✓ Bearer Attached' : 'None (Unauthenticated)'}</strong></span>
               <span>•</span>
               <span>Content-Type: <code>application/json</code></span>
             </div>
@@ -295,27 +381,41 @@ export default function ApiDocsPage() {
           {/* Request Payload Editor (if applicable) */}
           {current.body && (
             <div className="card" style={{ padding: '1.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>Request JSON Body</span>
-                <button
-                  onClick={() => copySnippet(JSON.stringify(current.body, null, 2))}
-                  className="btn btn-outline btn-sm"
-                  style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
-                >
-                  {copied ? <Check size={12} color="var(--accent-emerald)" /> : <Copy size={12} />} Copy
-                </button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>Editable Request JSON Body</span>
+                
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {current.path === '/api/auth/register' && (
+                    <button
+                      onClick={generateFreshEmail}
+                      className="btn btn-secondary btn-sm"
+                      style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
+                    >
+                      <RefreshCw size={12} /> New Test User
+                    </button>
+                  )}
+                  <button
+                    onClick={() => copySnippet(editableBody)}
+                    className="btn btn-outline btn-sm"
+                    style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
+                  >
+                    {copied ? <Check size={12} color="var(--accent-emerald)" /> : <Copy size={12} />} Copy JSON
+                  </button>
+                </div>
               </div>
-              <pre style={{
-                background: 'var(--bg-primary)',
-                padding: '1rem',
-                borderRadius: 'var(--radius-md)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                color: '#a5b4fc',
-                overflowX: 'auto'
-              }}>
-                {JSON.stringify(current.body, null, 2)}
-              </pre>
+
+              <textarea
+                className="form-textarea"
+                rows={7}
+                value={editableBody}
+                onChange={(e) => setEditableBody(e.target.value)}
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.85rem',
+                  color: '#a5b4fc',
+                  background: 'var(--bg-primary)'
+                }}
+              />
             </div>
           )}
 
@@ -329,7 +429,7 @@ export default function ApiDocsPage() {
 
               {apiResponse && (
                 <span className={`badge ${apiResponse.ok ? 'badge-emerald' : 'badge-rose'}`} style={{ fontSize: '0.75rem' }}>
-                  Status: {apiResponse.status} {apiResponse.ok ? 'OK' : 'Error'}
+                  HTTP {apiResponse.status} {apiResponse.ok ? 'OK' : 'Response'}
                 </span>
               )}
             </div>
