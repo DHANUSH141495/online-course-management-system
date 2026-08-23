@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function ApiDocsPage() {
-  const { user, token, authFetch } = useAuth();
+  const { user, token, authFetch, demoLogin, showToast } = useAuth();
   const [selectedEndpoint, setSelectedEndpoint] = useState(0);
   const [editableBody, setEditableBody] = useState('');
   const [apiResponse, setApiResponse] = useState(null);
@@ -356,15 +356,52 @@ export default function ApiDocsPage() {
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{current.desc}</p>
               </div>
 
-              <button
-                onClick={handleExecuteRequest}
-                disabled={requestLoading}
-                className="btn btn-primary"
-                style={{ padding: '0.65rem 1.25rem' }}
-              >
-                <Send size={15} /> {requestLoading ? 'Sending...' : 'Test Request'}
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                {current.role === 'admin' && user?.role !== 'admin' && (
+                  <button
+                    onClick={async () => {
+                      await demoLogin('admin');
+                      showToast('Switched to Demo Admin account! You can now execute Admin endpoints.', 'success');
+                    }}
+                    className="btn btn-secondary btn-sm"
+                    style={{ border: '1px solid var(--accent-amber)', color: '#fcd34d', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    title="Logs in as admin@coursify.com to grant required admin privileges"
+                  >
+                    ⚡ Switch to Demo Admin
+                  </button>
+                )}
+
+                <button
+                  onClick={handleExecuteRequest}
+                  disabled={requestLoading}
+                  className="btn btn-primary"
+                  style={{ padding: '0.65rem 1.25rem' }}
+                >
+                  <Send size={15} /> {requestLoading ? 'Sending...' : 'Test Request'}
+                </button>
+              </div>
             </div>
+
+            {/* Role Warning for Admin Endpoints */}
+            {current.role === 'admin' && user?.role !== 'admin' && (
+              <div style={{
+                padding: '0.6rem 0.85rem',
+                borderRadius: 'var(--radius-sm)',
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                fontSize: '0.8rem',
+                color: '#fde68a',
+                marginBottom: '0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}>
+                <ShieldCheck size={14} color="var(--accent-amber)" />
+                <span>
+                  <strong>Role-Based Access Control (RBAC):</strong> This endpoint requires <code>role: admin</code>. If tested as a student, the server will return <code>403 Forbidden</code>. Click <strong>"⚡ Switch to Demo Admin"</strong> above to test with admin rights.
+                </span>
+              </div>
+            )}
 
             {/* Auth & Headers Meta */}
             <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)', flexWrap: 'wrap' }}>
@@ -372,7 +409,7 @@ export default function ApiDocsPage() {
                 Auth Required: <strong>{current.auth ? (current.role ? `Yes (${current.role} role)` : 'Yes (JWT Bearer)') : 'No (Public)'}</strong>
               </span>
               <span>•</span>
-              <span>Active Token: <strong>{token ? '✓ Bearer Attached' : 'None (Unauthenticated)'}</strong></span>
+              <span>Logged-in User: <strong>{user ? `${user.name} (${user.role})` : 'None (Unauthenticated)'}</strong></span>
               <span>•</span>
               <span>Content-Type: <code>application/json</code></span>
             </div>
