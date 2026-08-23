@@ -16,10 +16,14 @@ import {
   Edit3,
   HelpCircle,
   Save,
-  Check
+  Check,
+  Lock,
+  GraduationCap,
+  ListChecks,
+  AlertCircle
 } from 'lucide-react';
 
-export default function LearningRoom({ courseId, onBack }) {
+export default function LearningRoom({ courseId, onBack, onOpenExam }) {
   const { user, authFetch, showToast } = useAuth();
   const [course, setCourse] = useState(null);
   const [enrollment, setEnrollment] = useState(null);
@@ -31,8 +35,8 @@ export default function LearningRoom({ courseId, onBack }) {
   const [toggling, setToggling] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
 
-  // In-Lesson Tabs & Interactive Features
-  const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'mynotes' | 'quiz'
+  // In-Lesson Tabs: 'precontent' | 'notes' | 'mynotes' | 'quiz'
+  const [activeTab, setActiveTab] = useState('notes');
   const [personalNotes, setPersonalNotes] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
   const [notesSavedFeedback, setNotesSavedFeedback] = useState(false);
@@ -64,6 +68,13 @@ export default function LearningRoom({ courseId, onBack }) {
   const activeLesson = lessons[activeLessonIndex];
   const isCurrentCompleted = activeLesson ? completedLessonIds.has(activeLesson.id) : false;
 
+  // Sequential learning lock helper: Lesson is unlocked if it's the first lesson OR previous lesson is completed
+  const isLessonUnlocked = (index) => {
+    if (index === 0) return true;
+    const prevLesson = lessons[index - 1];
+    return prevLesson ? completedLessonIds.has(prevLesson.id) : false;
+  };
+
   // Load personal notes for active lesson
   useEffect(() => {
     if (activeLesson) {
@@ -94,7 +105,13 @@ export default function LearningRoom({ courseId, onBack }) {
     }
   };
 
-  const handleToggleLesson = async (lessonId) => {
+  const handleToggleLesson = async (lessonId, lessonIndex) => {
+    // Check sequential prerequisite if attempting to complete an ahead lesson
+    if (lessonIndex > 0 && !isLessonUnlocked(lessonIndex)) {
+      showToast(`🔒 Sequential learning lock: Please complete Module ${lessonIndex} before checking this lesson.`, 'error');
+      return;
+    }
+
     if (toggling) return;
     setToggling(true);
 
@@ -121,7 +138,7 @@ export default function LearningRoom({ courseId, onBack }) {
           spread: 85,
           origin: { y: 0.6 }
         });
-        showToast('🎉 Congratulations! You have completed 100% of this course!', 'success');
+        showToast('🎉 Course completed 100%! The Final Certification Exam is now unlocked!', 'success');
       } else {
         showToast(data.message, 'info');
       }
@@ -203,7 +220,7 @@ export default function LearningRoom({ courseId, onBack }) {
           </div>
         </div>
 
-        {/* Progress & Certificate Button */}
+        {/* Progress, Exam & Certificate Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: '180px' }}>
             <div style={{ flex: 1 }}>
@@ -219,13 +236,29 @@ export default function LearningRoom({ courseId, onBack }) {
             </div>
           </div>
 
+          {progressPercent === 100 && onOpenExam && (
+            <button 
+              onClick={() => onOpenExam(course.id)}
+              className="btn btn-primary btn-sm"
+              style={{
+                background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+                boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <GraduationCap size={16} /> Take AI-Proctored Exam
+            </button>
+          )}
+
           {progressPercent === 100 && (
             <button 
               onClick={openCertificate}
               className="btn btn-primary btn-sm"
               style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none' }}
             >
-              <Award size={15} /> Claim Certificate
+              <Award size={15} /> Certificate
             </button>
           )}
         </div>
@@ -283,7 +316,7 @@ export default function LearningRoom({ courseId, onBack }) {
             </div>
 
             <button
-              onClick={() => handleToggleLesson(activeLesson.id)}
+              onClick={() => handleToggleLesson(activeLesson.id, activeLessonIndex)}
               disabled={toggling}
               className={`btn ${isCurrentCompleted ? 'btn-secondary' : 'btn-primary'}`}
               style={{
@@ -305,13 +338,34 @@ export default function LearningRoom({ courseId, onBack }) {
             </button>
           </div>
 
-          {/* Interactive Lesson Tabs (Notes, Personal Notes, Mini Quiz) */}
+          {/* Interactive Lesson Tabs */}
           <div style={{
             display: 'flex',
             gap: '0.5rem',
             borderBottom: '1px solid var(--border-color)',
-            marginBottom: '1.25rem'
+            marginBottom: '1.25rem',
+            overflowX: 'auto',
+            paddingBottom: '0.2rem'
           }}>
+            <button
+              onClick={() => setActiveTab('precontent')}
+              style={{
+                padding: '0.65rem 1.1rem',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: activeTab === 'precontent' ? '2px solid var(--accent-secondary)' : '2px solid transparent',
+                color: activeTab === 'precontent' ? 'var(--accent-secondary)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <ListChecks size={15} /> Pre-Content & Prerequisites
+            </button>
+
             <button
               onClick={() => setActiveTab('notes')}
               style={{
@@ -369,6 +423,29 @@ export default function LearningRoom({ courseId, onBack }) {
               <HelpCircle size={15} /> Knowledge Check (Quiz)
             </button>
           </div>
+
+          {/* Tab 0: Pre-Content & Prerequisites */}
+          {activeTab === 'precontent' && (
+            <div className="card" style={{ padding: '1.75rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--accent-secondary)' }}>
+                <ListChecks size={18} />
+                <h3 style={{ fontSize: '1.1rem', color: '#fff' }}>Course Prerequisites & Setup Orientation</h3>
+              </div>
+
+              <div style={{ fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                <p style={{ marginBottom: '1rem' }}>
+                  Welcome to <strong>{course.title}</strong>! Before beginning the core lessons, ensure you have completed the following setup requirements:
+                </p>
+                <ul style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <li><strong>Target Audience Level:</strong> {course.level}</li>
+                  <li><strong>Total Estimated Duration:</strong> {course.duration}</li>
+                  <li><strong>Required Environment:</strong> Modern Code Editor (VS Code / IntelliJ), Git, and Node.js / JDK / Python installed.</li>
+                  <li><strong>Sequential Learning Policy:</strong> Lessons must be completed sequentially without skipping. Complete each module checklist to unlock subsequent modules.</li>
+                  <li><strong>Certification Final Exam:</strong> Upon achieving 100% course completion, you will unlock the AI-proctored certification examination.</li>
+                </ul>
+              </div>
+            </div>
+          )}
 
           {/* Tab 1: Syllabus Notes */}
           {activeTab === 'notes' && (
@@ -542,7 +619,14 @@ export default function LearningRoom({ courseId, onBack }) {
 
             <button
               disabled={activeLessonIndex === lessons.length - 1}
-              onClick={() => setActiveLessonIndex(activeLessonIndex + 1)}
+              onClick={() => {
+                const nextIdx = activeLessonIndex + 1;
+                if (!isLessonUnlocked(nextIdx)) {
+                  showToast(`🔒 Complete Module ${activeLessonIndex + 1} first before proceeding.`, 'error');
+                  return;
+                }
+                setActiveLessonIndex(nextIdx);
+              }}
               className="btn btn-primary"
             >
               Next Lesson <ChevronRight size={16} />
@@ -550,7 +634,7 @@ export default function LearningRoom({ courseId, onBack }) {
           </div>
         </div>
 
-        {/* Right Sidebar Checklist */}
+        {/* Right Sidebar Checklist with Sequential Locking */}
         <div style={{
           background: 'var(--bg-secondary)',
           borderLeft: '1px solid var(--border-color)',
@@ -562,7 +646,7 @@ export default function LearningRoom({ courseId, onBack }) {
           <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--border-color)' }}>
             <h3 style={{ fontSize: '1.05rem', color: '#fff', marginBottom: '0.25rem' }}>Course Modules</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              {completedLessonIds.size} of {lessons.length} completed
+              {completedLessonIds.size} of {lessons.length} completed (Sequential Progression)
             </p>
           </div>
 
@@ -570,41 +654,55 @@ export default function LearningRoom({ courseId, onBack }) {
             {lessons.map((lesson, idx) => {
               const isCompleted = completedLessonIds.has(lesson.id);
               const isActive = activeLessonIndex === idx;
+              const isUnlocked = isLessonUnlocked(idx);
 
               return (
                 <div
                   key={lesson.id}
-                  onClick={() => setActiveLessonIndex(idx)}
+                  onClick={() => {
+                    if (!isUnlocked) {
+                      showToast(`🔒 Module locked: Please complete Module ${idx} first.`, 'error');
+                      return;
+                    }
+                    setActiveLessonIndex(idx);
+                  }}
                   style={{
                     padding: '1rem 1.25rem',
                     borderBottom: '1px solid var(--border-color)',
                     background: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
                     borderLeft: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent',
-                    cursor: 'pointer',
+                    cursor: isUnlocked ? 'pointer' : 'not-allowed',
+                    opacity: isUnlocked ? 1 : 0.45,
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '0.75rem',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleLesson(lesson.id);
-                    }}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      padding: 0,
-                      cursor: 'pointer',
-                      marginTop: '2px',
-                      color: isCompleted ? 'var(--accent-emerald)' : 'var(--text-muted)'
-                    }}
-                    title={isCompleted ? 'Completed' : 'Mark as complete'}
-                  >
-                    {isCompleted ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-                  </button>
+                  {isUnlocked ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleLesson(lesson.id, idx);
+                      }}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        padding: 0,
+                        cursor: 'pointer',
+                        marginTop: '2px',
+                        color: isCompleted ? 'var(--accent-emerald)' : 'var(--text-muted)'
+                      }}
+                      title={isCompleted ? 'Completed' : 'Mark as complete'}
+                    >
+                      {isCompleted ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+                    </button>
+                  ) : (
+                    <div style={{ marginTop: '2px', color: 'var(--text-muted)' }}>
+                      <Lock size={16} />
+                    </div>
+                  )}
 
                   <div style={{ flex: 1 }}>
                     <p style={{
@@ -617,7 +715,7 @@ export default function LearningRoom({ courseId, onBack }) {
                       {lesson.title}
                     </p>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      {lesson.duration}
+                      {lesson.duration} {!isUnlocked && '(Locked)'}
                     </span>
                   </div>
                 </div>

@@ -7,6 +7,7 @@ import CatalogPage from './pages/CatalogPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import StudentDashboard from './pages/StudentDashboard';
 import LearningRoom from './pages/LearningRoom';
+import ExamProctorRoom from './pages/ExamProctorRoom';
 import AdminDashboard from './pages/AdminDashboard';
 import ApiDocsPage from './pages/ApiDocsPage';
 import { useAuth } from './context/AuthContext';
@@ -14,7 +15,7 @@ import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 
 export default function App() {
   const { toasts, user, authFetch } = useAuth();
-  const [activePage, setActivePage] = useState('catalog'); // 'catalog' | 'course-detail' | 'student-dashboard' | 'learning-room' | 'admin-dashboard' | 'api-docs'
+  const [activePage, setActivePage] = useState('catalog'); // 'catalog' | 'course-detail' | 'student-dashboard' | 'learning-room' | 'exam-proctor' | 'admin-dashboard' | 'api-docs'
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [isGlobalAddCourseOpen, setIsGlobalAddCourseOpen] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -38,6 +39,12 @@ export default function App() {
   const handleOpenLearningRoom = (courseId) => {
     setSelectedCourseId(courseId);
     setActivePage('learning-room');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenExam = (courseId) => {
+    setSelectedCourseId(courseId);
+    setActivePage('exam-proctor');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -73,6 +80,7 @@ export default function App() {
             onOpenCourse={handleSelectCourse}
             onOpenLearningRoom={handleOpenLearningRoom}
             onExploreCatalog={() => handlePageChange('catalog')}
+            onOpenExam={handleOpenExam}
           />
         )}
 
@@ -80,6 +88,14 @@ export default function App() {
           <LearningRoom 
             courseId={selectedCourseId}
             onBack={() => handlePageChange(user?.role === 'admin' ? 'admin-dashboard' : 'student-dashboard')}
+            onOpenExam={handleOpenExam}
+          />
+        )}
+
+        {activePage === 'exam-proctor' && selectedCourseId && (
+          <ExamProctorRoom
+            courseId={selectedCourseId}
+            onBack={() => handlePageChange('learning-room')}
           />
         )}
 
@@ -94,8 +110,8 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer (hidden in dedicated full-screen learning room for distraction-free focus) */}
-      {activePage !== 'learning-room' && (
+      {/* Footer (hidden in dedicated full-screen learning/exam room for distraction-free focus) */}
+      {activePage !== 'learning-room' && activePage !== 'exam-proctor' && (
         <Footer onNavigate={handlePageChange} />
       )}
 

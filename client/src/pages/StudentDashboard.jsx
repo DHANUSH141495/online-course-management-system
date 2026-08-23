@@ -11,10 +11,11 @@ import {
   PlayCircle,
   Sparkles,
   Flame,
-  LayoutDashboard
+  LayoutDashboard,
+  GraduationCap
 } from 'lucide-react';
 
-export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onExploreCatalog }) {
+export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onExploreCatalog, onOpenExam }) {
   const { user, authFetch, openAuthModal } = useAuth();
   const [enrollments, setEnrollments] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
@@ -294,23 +295,34 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                     </div>
 
                     {/* Action Buttons */}
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                       <button
                         onClick={() => onOpenLearningRoom(item.course_id)}
                         className="btn btn-primary btn-sm"
-                        style={{ flex: 1 }}
+                        style={{ flex: 1, minWidth: '90px' }}
                       >
-                        <PlayCircle size={15} /> {item.progress_percent === 100 ? 'Review Course' : 'Resume'}
+                        <PlayCircle size={14} /> {item.progress_percent === 100 ? 'Review' : 'Resume'}
                       </button>
+
+                      {item.progress_percent === 100 && onOpenExam && (
+                        <button
+                          onClick={() => onOpenExam(item.course_id)}
+                          className="btn btn-secondary btn-sm"
+                          style={{ border: '1px solid var(--accent-primary)', color: '#a5b4fc', fontSize: '0.78rem' }}
+                          title="Take AI-Proctored Certification Exam"
+                        >
+                          <GraduationCap size={14} /> Exam
+                        </button>
+                      )}
 
                       {item.progress_percent === 100 && (
                         <button
                           onClick={() => handleViewCertificate(item)}
                           className="btn btn-outline btn-sm"
-                          style={{ border: '1px solid var(--accent-amber)', color: '#fcd34d' }}
+                          style={{ border: '1px solid var(--accent-amber)', color: '#fcd34d', fontSize: '0.78rem' }}
                           title="View Certificate of Completion"
                         >
-                          <Award size={15} /> Certificate
+                          <Award size={14} /> Certificate
                         </button>
                       )}
                     </div>

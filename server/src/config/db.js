@@ -131,6 +131,40 @@ function initDatabase() {
     );
   `);
 
+  // Final Certification Exam Questions Table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exam_questions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      question TEXT NOT NULL,
+      option_a TEXT NOT NULL,
+      option_b TEXT NOT NULL,
+      option_c TEXT NOT NULL,
+      option_d TEXT NOT NULL,
+      correct_option TEXT NOT NULL, -- 'A', 'B', 'C', 'D'
+      explanation TEXT,
+      points INTEGER NOT NULL DEFAULT 1
+    );
+  `);
+
+  // Student Exam Submissions & Proctoring Log Table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS exam_submissions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      total_questions INTEGER NOT NULL,
+      correct_answers INTEGER NOT NULL,
+      score_percent INTEGER NOT NULL,
+      passed INTEGER NOT NULL DEFAULT 0,
+      warnings_count INTEGER NOT NULL DEFAULT 0,
+      terminated_for_malpractice INTEGER NOT NULL DEFAULT 0,
+      proctor_status TEXT NOT NULL DEFAULT 'clean', -- 'clean', 'warned', 'disqualified'
+      certificate_code TEXT,
+      submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
   seedData();
 }
 

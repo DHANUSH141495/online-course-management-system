@@ -3,6 +3,8 @@ const router = express.Router();
 const enrollmentController = require('../controllers/enrollmentController');
 const { authenticate } = require('../middleware/auth');
 
+const examController = require('../controllers/examController');
+
 router.use(authenticate);
 
 router.post('/', enrollmentController.enrollInCourse);
@@ -11,5 +13,9 @@ router.get('/courses/:courseId/learn', enrollmentController.getCourseLearningRoo
 router.post('/courses/:courseId/lessons/:lessonId/complete', enrollmentController.toggleLessonCompletion);
 router.get('/lessons/:lessonId/notes', enrollmentController.getLessonNotes);
 router.post('/lessons/:lessonId/notes', enrollmentController.saveLessonNotes);
+
+// Exam Endpoints
+router.get('/courses/:courseId/exam', examController.getCourseExam);
+router.post('/courses/:courseId/exam/submit', examController.submitCourseExam);
 
 module.exports = router;

@@ -116,13 +116,32 @@ async function runComprehensiveApiAudit() {
     console.log(`[14/15] GET /api/enrollments/lessons/1/notes -> Status ${getNote.status} (Note text length: ${getNote.data.note_text?.length} chars)`);
     assert(getNote.status === 200, 'Get notes failed');
 
-    // 13. Admin Overview Dashboard Stats
+    // 15. Certification Exam Endpoints
+    const examData = await makeRequest('GET', '/enrollments/courses/1/exam', null, studentToken);
+    console.log(`[15/17] GET /api/enrollments/courses/1/exam -> Status ${examData.status} (${examData.data.questions?.length} exam questions, Eligible: ${examData.data.is_eligible})`);
+    assert(examData.status === 200, 'Get exam failed');
+
+    const examSubmit = await makeRequest('POST', '/enrollments/courses/1/exam/submit', {
+      answers: {
+        [examData.data.questions[0]?.id || 1]: 'A',
+        [examData.data.questions[1]?.id || 2]: 'B',
+        [examData.data.questions[2]?.id || 3]: 'C',
+        [examData.data.questions[3]?.id || 4]: 'C',
+        [examData.data.questions[4]?.id || 5]: 'A'
+      },
+      warnings_count: 0,
+      terminated_for_malpractice: false
+    }, studentToken);
+    console.log(`[16/17] POST /api/enrollments/courses/1/exam/submit -> Status ${examSubmit.status} (Score: ${examSubmit.data.score_percent}%, Passed: ${examSubmit.data.passed}, Cert: ${examSubmit.data.certificate_code})`);
+    assert(examSubmit.status === 200, 'Exam submission failed');
+
+    // 16. Admin Overview Dashboard Stats
     const adminStats = await makeRequest('GET', '/admin/stats', null, adminToken);
-    console.log(`[15/15] GET /api/admin/stats -> Status ${adminStats.status} (Total Students: ${adminStats.data.stats?.totalStudents}, Enrollments: ${adminStats.data.stats?.totalEnrollments})`);
+    console.log(`[17/17] GET /api/admin/stats -> Status ${adminStats.status} (Total Students: ${adminStats.data.stats?.totalStudents}, Enrollments: ${adminStats.data.stats?.totalEnrollments})`);
     assert(adminStats.status === 200, 'Admin stats failed');
 
     console.log('\n======================================================');
-    console.log('✅ ALL 15 API ENDPOINTS AUDITED & WORKING 100% PERFECTLY!');
+    console.log('✅ ALL 17 API ENDPOINTS AUDITED & WORKING 100% PERFECTLY!');
     console.log('======================================================\n');
   } catch (error) {
     console.error('\n❌ Audit Encountered an Issue:', error);
