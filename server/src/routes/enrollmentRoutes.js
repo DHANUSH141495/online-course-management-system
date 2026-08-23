@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const enrollmentController = require('../controllers/enrollmentController');
-const { authenticate } = require('../middleware/auth');
-
 const examController = require('../controllers/examController');
+const { authenticate } = require('../middleware/auth');
 
 router.use(authenticate);
 
