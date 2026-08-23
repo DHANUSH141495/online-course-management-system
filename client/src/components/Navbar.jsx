@@ -150,19 +150,21 @@ export default function Navbar({ activePage, setActivePage }) {
             </button>
           )}
 
-          <button
-            onClick={() => handleNavClick('api-docs')}
-            className={`btn ${activePage === 'api-docs' ? 'btn-secondary' : 'btn-outline'}`}
-            style={{ 
-              border: activePage === 'api-docs' ? '1px solid var(--accent-cyan)' : '1px solid transparent',
-              background: activePage === 'api-docs' ? 'rgba(6, 182, 212, 0.12)' : 'transparent',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem'
-            }}
-          >
-            <Code size={16} />
-            REST APIs
-          </button>
+          {(!user || user.role === 'admin') && (
+            <button
+              onClick={() => handleNavClick('api-docs')}
+              className={`btn ${activePage === 'api-docs' ? 'btn-secondary' : 'btn-outline'}`}
+              style={{ 
+                border: activePage === 'api-docs' ? '1px solid var(--accent-cyan)' : '1px solid transparent',
+                background: activePage === 'api-docs' ? 'rgba(6, 182, 212, 0.12)' : 'transparent',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.85rem'
+              }}
+            >
+              <Code size={16} />
+              REST APIs
+            </button>
+          )}
         </nav>
 
         {/* Right Actions / Auth */}
@@ -415,13 +417,15 @@ export default function Navbar({ activePage, setActivePage }) {
               <ShieldAlert size={16} /> Admin Portal
             </button>
           )}
-          <button 
-            onClick={() => handleNavClick('api-docs')}
-            className={`btn ${activePage === 'api-docs' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ justifyContent: 'flex-start' }}
-          >
-            <Code size={16} /> REST API Explorer
-          </button>
+          {(!user || user.role === 'admin') && (
+            <button 
+              onClick={() => handleNavClick('api-docs')}
+              className={`btn ${activePage === 'api-docs' ? 'btn-primary' : 'btn-outline'}`}
+              style={{ justifyContent: 'flex-start' }}
+            >
+              <Code size={16} /> REST API Explorer
+            </button>
+          )}
         </div>
       )}
 
