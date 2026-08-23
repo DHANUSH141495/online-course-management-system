@@ -1,0 +1,22 @@
+{
+  "name": "coursify-course-management",
+  "version": "1.0.0",
+  "description": "Full-Stack Online Course Management System",
+  "main": "server/src/server.js",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:client\"",
+    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
+    "start": "node server/src/server.js",
+    "test": "node server/test_api.js",
+    "seed": "node server/src/config/db.js"
+  },
+  "keywords": ["course-management", "full-stack", "react", "express", "sqlite", "education"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
