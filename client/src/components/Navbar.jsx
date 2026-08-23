@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   GraduationCap, 
@@ -11,13 +11,36 @@ import {
   Sparkles,
   ChevronDown,
   Menu,
-  X
+  X,
+  Palette,
+  Check
 } from 'lucide-react';
 
 export default function Navbar({ activePage, setActivePage }) {
   const { user, logout, openAuthModal, demoLogin } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [themePickerOpen, setThemePickerOpen] = useState(false);
+
+  const themes = [
+    { id: 'midnight', name: 'Midnight Cyber', color1: '#6366f1', color2: '#06b6d4', icon: '🌌' },
+    { id: 'emerald', name: 'Matrix Emerald', color1: '#10b981', color2: '#34d399', icon: '🌲' },
+    { id: 'amethyst', name: 'Cosmic Amethyst', color1: '#a855f7', color2: '#ec4899', icon: '🔮' },
+    { id: 'ocean', name: 'Oceanic Sapphire', color1: '#0284c7', color2: '#38bdf8', icon: '🌊' },
+    { id: 'sunset', name: 'Sunset Ember', color1: '#f43f5e', color2: '#fb923c', icon: '🌅' }
+  ];
+
+  const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('coursify_theme') || 'midnight');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    localStorage.setItem('coursify_theme', currentTheme);
+  }, [currentTheme]);
+
+  const handleSelectTheme = (themeId) => {
+    setCurrentTheme(themeId);
+    setThemePickerOpen(false);
+  };
 
   const handleNavClick = (page) => {
     setActivePage(page);
@@ -144,6 +167,93 @@ export default function Navbar({ activePage, setActivePage }) {
 
         {/* Right Actions / Auth */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Theme Switcher Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setThemePickerOpen(!themePickerOpen)}
+              className="btn btn-outline btn-sm"
+              style={{
+                borderRadius: 'var(--radius-full)',
+                padding: '0.35rem 0.65rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                fontSize: '0.8rem'
+              }}
+              title="Change Theme Palette"
+            >
+              <Palette size={14} color="var(--accent-cyan)" />
+              <span className="desktop-nav-inline">Theme</span>
+            </button>
+
+            {themePickerOpen && (
+              <div style={{
+                position: 'absolute',
+                right: 0,
+                top: 'calc(100% + 8px)',
+                width: '210px',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: 'var(--shadow-lg)',
+                padding: '0.5rem',
+                zIndex: 250,
+                animation: 'fadeIn 0.15s ease'
+              }}>
+                <div style={{ padding: '0.4rem 0.6rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    Select Theme Palette
+                  </span>
+                </div>
+
+                {themes.map((t) => {
+                  const isSelected = currentTheme === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => handleSelectTheme(t.id)}
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem 0.6rem',
+                        borderRadius: 'var(--radius-sm)',
+                        background: isSelected ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                        border: 'none',
+                        color: isSelected ? '#fff' : 'var(--text-secondary)',
+                        fontSize: '0.825rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s ease',
+                        marginBottom: '2px'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span>{t.icon}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <span style={{
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            background: t.color1
+                          }} />
+                          <span style={{
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            background: t.color2
+                          }} />
+                          <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t.name}</span>
+                        </div>
+                      </div>
+                      {isSelected && <Check size={14} color="var(--accent-emerald)" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {/* Quick 1-Click Demo Login helpers for Viva/Grading */}
           {!user && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>

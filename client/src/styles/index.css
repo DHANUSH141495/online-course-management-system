@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-theme="midnight"] {
   --bg-primary: #0a0d17;
   --bg-secondary: #111625;
   --bg-tertiary: #192237;
@@ -20,6 +21,10 @@
   --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
 
+  --gradient-radial-1: rgba(99, 102, 241, 0.14);
+  --gradient-radial-2: rgba(139, 92, 246, 0.12);
+  --gradient-radial-3: rgba(6, 182, 212, 0.08);
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
@@ -33,10 +38,118 @@
 
   --font-sans: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Fira Code', monospace;
+}
 
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s ease;
-  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+/* Theme 2: Emerald Matrix / Deep Forest */
+[data-theme="emerald"] {
+  --bg-primary: #04120e;
+  --bg-secondary: #081f18;
+  --bg-tertiary: #0f3026;
+  --bg-card: rgba(8, 31, 24, 0.8);
+  --bg-card-hover: rgba(15, 48, 38, 0.92);
+  --border-color: rgba(52, 211, 153, 0.12);
+  --border-highlight: rgba(16, 185, 129, 0.45);
+
+  --text-primary: #f0fdf4;
+  --text-secondary: #a7f3d0;
+  --text-muted: #4ade80;
+
+  --accent-primary: #10b981;
+  --accent-primary-hover: #059669;
+  --accent-glow: rgba(16, 185, 129, 0.35);
+  --accent-secondary: #34d399;
+  --accent-cyan: #2dd4bf;
+  --accent-emerald: #10b981;
+  --accent-amber: #fbbf24;
+  --accent-rose: #f43f5e;
+
+  --gradient-radial-1: rgba(16, 185, 129, 0.15);
+  --gradient-radial-2: rgba(52, 211, 153, 0.1);
+  --gradient-radial-3: rgba(45, 212, 191, 0.08);
+}
+
+/* Theme 3: Cosmic Amethyst / Cyber Violet */
+[data-theme="amethyst"] {
+  --bg-primary: #0c0717;
+  --bg-secondary: #160d29;
+  --bg-tertiary: #22153d;
+  --bg-card: rgba(22, 13, 41, 0.8);
+  --bg-card-hover: rgba(34, 21, 61, 0.92);
+  --border-color: rgba(192, 132, 252, 0.12);
+  --border-highlight: rgba(168, 85, 247, 0.45);
+
+  --text-primary: #faf5ff;
+  --text-secondary: #d8b4fe;
+  --text-muted: #a855f7;
+
+  --accent-primary: #a855f7;
+  --accent-primary-hover: #9333ea;
+  --accent-glow: rgba(168, 85, 247, 0.35);
+  --accent-secondary: #c084fc;
+  --accent-cyan: #38bdf8;
+  --accent-emerald: #34d399;
+  --accent-amber: #fbbf24;
+  --accent-rose: #ec4899;
+
+  --gradient-radial-1: rgba(168, 85, 247, 0.16);
+  --gradient-radial-2: rgba(236, 72, 153, 0.12);
+  --gradient-radial-3: rgba(56, 189, 248, 0.08);
+}
+
+/* Theme 4: Oceanic Sapphire / Nordic Blue */
+[data-theme="ocean"] {
+  --bg-primary: #070e1b;
+  --bg-secondary: #0c182d;
+  --bg-tertiary: #132442;
+  --bg-card: rgba(12, 24, 45, 0.8);
+  --bg-card-hover: rgba(19, 36, 66, 0.92);
+  --border-color: rgba(56, 189, 248, 0.12);
+  --border-highlight: rgba(14, 165, 233, 0.45);
+
+  --text-primary: #f0f9ff;
+  --text-secondary: #bae6fd;
+  --text-muted: #38bdf8;
+
+  --accent-primary: #0284c7;
+  --accent-primary-hover: #0369a1;
+  --accent-glow: rgba(2, 132, 199, 0.35);
+  --accent-secondary: #38bdf8;
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  --gradient-radial-1: rgba(2, 132, 199, 0.15);
+  --gradient-radial-2: rgba(56, 189, 248, 0.12);
+  --gradient-radial-3: rgba(6, 182, 212, 0.08);
+}
+
+/* Theme 5: Sunset Nebula / Ember Coral */
+[data-theme="sunset"] {
+  --bg-primary: #12080c;
+  --bg-secondary: #1e0d15;
+  --bg-tertiary: #2e1520;
+  --bg-card: rgba(30, 13, 21, 0.8);
+  --bg-card-hover: rgba(46, 21, 32, 0.92);
+  --border-color: rgba(251, 113, 133, 0.12);
+  --border-highlight: rgba(244, 63, 94, 0.45);
+
+  --text-primary: #fff1f2;
+  --text-secondary: #fecdd3;
+  --text-muted: #fb7185;
+
+  --accent-primary: #f43f5e;
+  --accent-primary-hover: #e11d48;
+  --accent-glow: rgba(244, 63, 94, 0.35);
+  --accent-secondary: #fb923c;
+  --accent-cyan: #38bdf8;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  --gradient-radial-1: rgba(244, 63, 94, 0.16);
+  --gradient-radial-2: rgba(251, 146, 60, 0.12);
+  --gradient-radial-3: rgba(245, 158, 11, 0.08);
 }
 
 * {
@@ -54,10 +167,11 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, var(--gradient-radial-1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--gradient-radial-2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, var(--gradient-radial-3) 0px, transparent 50%);
   background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom Scrollbars */
