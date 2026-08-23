@@ -3,195 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coursify — Comprehensive Project Report & Technical Documentation</title>
+  <title>Coursify — Complete Engineering Dissertation & Technical Project Report</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-light: #6366f1;
-      --secondary: #0ea5e9;
-      --emerald: #10b981;
-      --rose: #f43f5e;
-      --amber: #f59e0b;
-      --purple: #8b5cf6;
+      --primary: #4338ca;
+      --primary-accent: #6366f1;
+      --secondary: #0284c7;
+      --emerald: #059669;
+      --rose: #e11d48;
+      --amber: #d97706;
+      --purple: #7c3aed;
       --bg: #ffffff;
       --surface: #f8fafc;
-      --border: #e2e8f0;
+      --border: #cbd5e1;
+      --border-light: #e2e8f0;
       --text: #0f172a;
+      --text-secondary: #334155;
       --text-muted: #64748b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text);
-      background: #f1f5f9;
-      line-height: 1.65;
+      background: #e2e8f0;
+      line-height: 1.7;
       -webkit-font-smoothing: antialiased;
     }
 
-    .report-container {
-      max-width: 900px;
-      margin: 2rem auto;
+    .report-wrapper {
+      max-width: 960px;
+      margin: 2.5rem auto;
       background: var(--bg);
-      padding: 4rem 4.5rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      padding: 4.5rem 5rem;
+      border-radius: 14px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
     }
 
-    /* Print styling */
+    /* Print optimizations */
     @media print {
       body { background: #fff; }
-      .report-container { max-width: 100%; margin: 0; padding: 1.5cm; box-shadow: none; border-radius: 0; }
+      .report-wrapper { max-width: 100%; margin: 0; padding: 1.2cm 1.5cm; box-shadow: none; border-radius: 0; }
       .no-print { display: none !important; }
       .page-break { page-break-before: always; }
-      h1, h2, h3 { page-break-after: avoid; }
-      pre, table, .card { page-break-inside: avoid; }
+      h1, h2, h3, h4 { page-break-after: avoid; }
+      pre, table, .card, .flowchart { page-break-inside: avoid; }
     }
 
-    /* Floating Print Button */
+    /* Floating Download/Print Toolbar */
     .print-bar {
       position: fixed;
       bottom: 2rem;
-      right: 2rem;
-      z-index: 1000;
+      right: 2.5rem;
+      z-index: 9999;
       display: flex;
-      gap: 0.75rem;
+      gap: 1rem;
     }
     .print-btn {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
       color: #fff;
       border: none;
-      padding: 0.85rem 1.5rem;
-      font-size: 0.95rem;
+      padding: 0.9rem 1.75rem;
+      font-size: 1rem;
       font-weight: 700;
       border-radius: 9999px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      transition: transform 0.2s ease;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
     }
-    .print-btn:hover { transform: translateY(-2px); }
+    .print-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(79, 70, 229, 0.5); }
 
     /* Cover Page */
     .cover-page {
       text-align: center;
-      padding: 4rem 1rem 5rem 1rem;
-      border-bottom: 2px solid var(--border);
+      padding: 3rem 1rem 4.5rem 1rem;
+      border-bottom: 3px solid var(--border-light);
       margin-bottom: 3.5rem;
     }
-    .badge {
+    .tagline-badge {
       display: inline-block;
-      padding: 0.35rem 0.9rem;
+      padding: 0.4rem 1.1rem;
       background: #eef2ff;
       color: var(--primary);
       border: 1px solid #c7d2fe;
       border-radius: 9999px;
-      font-size: 0.8rem;
-      font-weight: 700;
+      font-size: 0.85rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       margin-bottom: 1.5rem;
     }
-    .cover-title {
+    .main-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 2.75rem;
-      font-weight: 800;
+      font-size: 3.25rem;
+      font-weight: 900;
       color: #0f172a;
-      line-height: 1.2;
-      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
     }
-    .cover-subtitle {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      max-width: 680px;
+    .main-title span { color: var(--primary-accent); }
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 720px;
       margin: 0 auto 2.5rem auto;
       font-weight: 400;
+      line-height: 1.5;
     }
-    .author-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 2rem;
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
       background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 1rem 2rem;
-      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      padding: 1.5rem;
+      border-radius: 12px;
       text-align: left;
     }
-    .author-item h4 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
-    .author-item p { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .meta-item h4 {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.25rem;
+    }
+    .meta-item p {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
 
-    /* Typography */
+    /* Headings & Sectioning */
     h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.65rem;
-      font-weight: 700;
+      font-size: 1.75rem;
+      font-weight: 800;
       color: #0f172a;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 0.4rem;
-      margin-top: 3rem;
+      border-bottom: 2px solid var(--border-light);
+      padding-bottom: 0.5rem;
+      margin-top: 3.25rem;
       margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
     h3 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: #1e293b;
-      margin-top: 1.75rem;
-      margin-bottom: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 0.85rem;
     }
-    p { margin-bottom: 1rem; color: #334155; font-size: 0.95rem; }
-    ul, ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
-    li { margin-bottom: 0.4rem; color: #334155; font-size: 0.95rem; }
+    h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #334155;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    p { margin-bottom: 1.15rem; color: var(--text-secondary); font-size: 0.975rem; }
+    ul, ol { margin-bottom: 1.25rem; padding-left: 1.6rem; }
+    li { margin-bottom: 0.45rem; color: var(--text-secondary); font-size: 0.975rem; }
+    strong { color: var(--text); font-weight: 600; }
 
-    /* Card & Boxes */
-    .card {
+    /* Cards & Callouts */
+    .callout {
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-light);
+      border-left: 5px solid var(--primary-accent);
       border-radius: 8px;
       padding: 1.25rem 1.5rem;
       margin-bottom: 1.5rem;
     }
-    .card-accent {
-      border-left: 4px solid var(--primary);
-    }
-    .card-emerald {
-      border-left: 4px solid var(--emerald);
+    .callout-emerald {
+      border-left-color: var(--emerald);
       background: #f0fdf4;
     }
-    .card-amber {
-      border-left: 4px solid var(--amber);
+    .callout-amber {
+      border-left-color: var(--amber);
       background: #fffbeb;
     }
 
     /* Code Blocks */
     pre {
-      background: #0f172a;
+      background: #090d16;
       color: #f8fafc;
-      padding: 1.1rem 1.25rem;
-      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
       font-family: 'Fira Code', monospace;
-      font-size: 0.825rem;
+      font-size: 0.84rem;
       overflow-x: auto;
       margin-bottom: 1.5rem;
-      line-height: 1.5;
+      line-height: 1.55;
+      border: 1px solid #1e293b;
     }
     code {
       font-family: 'Fira Code', monospace;
-      font-size: 0.85em;
+      font-size: 0.86em;
       background: #f1f5f9;
       color: #0f172a;
-      padding: 0.15rem 0.35rem;
+      padding: 0.2rem 0.4rem;
       border-radius: 4px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
     }
     pre code {
       background: transparent;
@@ -204,267 +226,385 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 1.5rem;
-      font-size: 0.88rem;
+      margin-bottom: 1.75rem;
+      font-size: 0.9rem;
     }
     th, td {
-      padding: 0.75rem 0.9rem;
+      padding: 0.85rem 1rem;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-light);
     }
     th {
       background: #f8fafc;
       font-weight: 700;
-      color: #1e293b;
+      color: #0f172a;
       border-top: 1px solid var(--border);
+      border-bottom: 2px solid var(--border);
     }
     tr:nth-child(even) { background: #fbfcfe; }
 
-    /* Flowchart Box */
-    .flowchart {
-      background: #0b0f19;
-      color: #e2e8f0;
+    /* ASCII Diagrams */
+    .ascii-diagram {
+      background: #080c16;
+      color: #cbd5e1;
       padding: 1.5rem;
       border-radius: 10px;
       font-family: 'Fira Code', monospace;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       line-height: 1.45;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       overflow-x: auto;
       border: 1px solid #1e293b;
+    }
+
+    .footer-stamp {
+      margin-top: 4rem;
+      text-align: center;
+      border-top: 2px solid var(--border-light);
+      padding-top: 2rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating Print Actions -->
+  <!-- Floating Print/PDF Bar -->
   <div class="print-bar no-print">
     <button class="print-btn" onclick="window.print()">
       🖨️ Download / Save as PDF
     </button>
   </div>
 
-  <div class="report-container">
+  <div class="report-wrapper">
     <!-- Cover Page -->
     <div class="cover-page">
-      <span class="badge">Project 2 Final Technical Report</span>
-      <h1 class="cover-title">COURSIFY</h1>
-      <p class="cover-subtitle">
-        Full-Stack Online Course Management & AI-Proctored E-Learning Certification Platform
+      <span class="tagline-badge">Final Technical Engineering Dissertation</span>
+      <h1 class="main-title">COURSIFY</h1>
+      <p class="subtitle">
+        An Enterprise-Grade Full-Stack Online Course Management & AI-Proctored E-Learning Platform
       </p>
 
-      <div class="author-box">
-        <div class="author-item">
-          <h4>Lead Developer</h4>
+      <div class="metadata-grid">
+        <div class="meta-item">
+          <h4>Author & Developer</h4>
           <p>Dhanush</p>
         </div>
-        <div class="author-item">
-          <h4>Project Type</h4>
+        <div class="meta-item">
+          <h4>Project Scope</h4>
           <p>Full-Stack Web App</p>
         </div>
-        <div class="author-item">
-          <h4>Architecture</h4>
-          <p>React 18 + Node.js + SQLite</p>
+        <div class="meta-item">
+          <h4>Primary Stack</h4>
+          <p>React 18 + Node + SQLite</p>
         </div>
-        <div class="author-item">
-          <h4>Date</h4>
-          <p>August 2026</p>
+        <div class="meta-item">
+          <h4>Academic Year</h4>
+          <p>2026</p>
         </div>
       </div>
     </div>
 
-    <!-- Section 1: Executive Summary & Project Objectives -->
-    <h2>1. Executive Summary & Problem Statement</h2>
+    <!-- Chapter 1: Introduction & Problem Landscape -->
+    <h2>1. Introduction & Problem Statement</h2>
+    
+    <h3>1.1 Background & Motivation</h3>
     <p>
-      In contemporary e-learning systems, two pervasive limitations undermine pedagogical value: <strong>lack of active retention</strong> (students passively skimming or skipping video materials) and <strong>lack of academic integrity</strong> during certification examinations.
+      The digital transformation of education has accelerated the adoption of Learning Management Systems (LMS). However, the vast majority of existing web-based platforms suffer from two fundamental engineering and pedagogical flaws:
     </p>
+    <ol>
+      <li><strong>Passive Content Skimming & Skipping:</strong> Students often navigate directly to the final video module or exam without completing foundational modules, severely degrading retention.</li>
+      <li><strong>Compromised Certification Integrity:</strong> Online evaluations are notoriously vulnerable to unauthorized tab switching, web searching, clipboard copy-pasting, and unattended sessions.</li>
+    </ol>
+
+    <h3>1.2 The Coursify Solution</h3>
     <p>
-      <strong>Coursify</strong> is an enterprise-grade full-stack online learning management system engineered to address these challenges with 6 core innovations:
+      <strong>Coursify</strong> is an engineered full-stack software application built to eliminate these vulnerabilities. It introduces a comprehensive learning suite combining:
     </p>
     <ul>
-      <li><strong>107 Seeded Industry Courses:</strong> Categorized across 8 domains with over 400 interactive lessons.</li>
-      <li><strong>Sequential Progression Lock (Anti-Skipping):</strong> Modules remain strictly locked in sequence (Module $N$ requires Module $N-1$ completion).</li>
-      <li><strong>AI-Proctored Examination Suite:</strong> Active webcam/mic streaming, window blur/tab-switch detection, procedural audio warnings, 3-strike malpractice termination, and clipboard copy-paste blocking.</li>
-      <li><strong>In-Lesson Study Scratchpad & Concept Quizzes:</strong> Auto-saving personal code notes directly saved per lesson into SQLite, accompanied by instant multiple-choice concept checks.</li>
-      <li><strong>5 Custom Dynamic Theme Palettes:</strong> Midnight Cyber, Matrix Emerald, Cosmic Amethyst, Oceanic Sapphire, and Sunset Ember with instant 60fps GPU token transitions and local storage persistence.</li>
-      <li><strong>Verifiable Certificate Issuance:</strong> Cryptographically generated certificates featuring unique verification IDs and PDF canvas printing.</li>
+      <li><strong>107 Seeded Industry Courses</strong> spanning 8 specialized computer science domains.</li>
+      <li><strong>Sequential Progression Enforcement:</strong> Programmatic module locking ensuring prerequisite mastery.</li>
+      <li><strong>AI-Proctored Anti-Cheating Suite:</strong> Real-time webcam monitoring, 3-strike tab-switch/window blur detection with procedural audio alarms, and 100% clipboard interceptors.</li>
+      <li><strong>In-Lesson Study Scratchpad & Concept Quizzes:</strong> Auto-saving relational markdown notes and immediate formative multiple-choice assessments.</li>
+      <li><strong>5 Dynamic GPU-Accelerated Themes:</strong> Instant token-driven theme transitions across Midnight Cyber, Matrix Emerald, Cosmic Amethyst, Oceanic Sapphire, and Sunset Ember.</li>
     </ul>
 
-    <!-- Section 2: Architecture & Flowcharts -->
+    <!-- Chapter 2: System Architecture & Workflows -->
     <div class="page-break"></div>
-    <h2>2. System Architecture & Workflows</h2>
+    <h2>2. System Architecture & Technical Flowcharts</h2>
 
-    <h3>2.1 Overall System Architecture</h3>
-    <p>The application follows a decoupled client-server architecture with relational database storage:</p>
+    <h3>2.1 High-Level 3-Tier Layered Architecture</h3>
+    <p>
+      The system is designed following a clean 3-Tier Client-Server-Database architecture with stateless JWT authentication:
+    </p>
 
-    <div class="flowchart">
-+-------------------------------------------------------------------------------+
-|                                CLIENT TIER                                    |
-|  React 18 (Vite SPA) | 5 Dynamic CSS Theme Engines | AudioContext Alerts      |
-|  - Catalog & Search  | - Classroom Player          | - AI Exam Proctor Room   |
-+---------------------------------------+---------------------------------------+
-                                        | (HTTPS / RESTful JSON / Bearer JWT)
-                                        v
-+-------------------------------------------------------------------------------+
-|                                SERVER TIER                                    |
-|  Node.js + Express.js REST API Server                                         |
-|  - Auth Middleware (JWT + Bcrypt)     | - RBAC (Admin / Student Protection)   |
-|  - Course Controller (107 Courses)    | - Exam Controller (Proctor Logic)     |
-|  - Enrollment & Notes Controller      | - Static Single-Port Asset Server     |
-+---------------------------------------+---------------------------------------+
-                                        | (Better-SQLite3 Prepared Statements)
-                                        v
-+-------------------------------------------------------------------------------+
-|                                DATABASE TIER                                  |
-|  SQLite3 Relational Database (3NF Normalized)                                 |
-|  [users] [courses] [lessons] [enrollments] [lesson_progress]                  |
-|  [lesson_notes] [bookmarks] [exam_questions] [exam_submissions]              |
-+-------------------------------------------------------------------------------+
+    <div class="ascii-diagram">
++===================================================================================+
+|                                    CLIENT TIER                                    |
+|  React 18 SPA (Vite) | 5 Dynamic CSS Theme Engines | Web Audio API Alerts         |
+|  - Course Catalog & Search       - Interactive Video Classroom (Sequential Locks) |
+|  - Student & Admin Dashboards    - AI-Proctored Examination Booth                 |
++=========================================+=========================================+
+                                          |
+                                          | (HTTPS / REST JSON API / Bearer JWT)
+                                          v
++===================================================================================+
+|                                    SERVER TIER                                    |
+|  Node.js (v20+) & Express.js REST API Server                                      |
+|  - Authentication Middleware (JWT + Salted Bcrypt Hashing)                        |
+|  - Role-Based Access Control (RBAC: 'student' vs 'admin')                         |
+|  - Course Controller (107 Courses, Category Filters, Bookmarks)                   |
+|  - Enrollment & Progress Engine (Sequential Locks, SQLite Notes)                  |
+|  - Exam Proctoring Controller (535 Questions, 3-Strike Malpractice Evaluation)   |
+|  - Static Single-Port Production Web Server                                       |
++=========================================+=========================================+
+                                          |
+                                          | (Better-SQLite3 Prepared Statements)
+                                          v
++===================================================================================+
+|                                  DATABASE TIER                                    |
+|  SQLite3 Relational Database (3NF Normalized with Foreign Key Cascade Deletions) |
+|  [users] [courses] [lessons] [enrollments] [lesson_progress]                      |
+|  [lesson_notes] [bookmarks] [exam_questions] [exam_submissions]                  |
++===================================================================================+
     </div>
 
-    <h3>2.2 AI-Proctored Examination Workflow</h3>
-    <div class="flowchart">
-[ Student Completes 100% of Course Modules ]
-                     |
-                     v
-[ Enter AI-Proctored Exam Room ]
-                     |
-                     v
-[ Request Webcam & Microphone Permissions (getUserMedia) ]
-                     |
-                     v
-[ Active Exam Mode: Anti-Copy/Paste & Window Blur Listeners Active ]
-                     |
-                     +---------------------------------------+
-                     |                                       |
-           (Tab Switch / Blur Detected)             (Valid MCQ Answers)
-                     |                                       |
-                     v                                       v
-         [ Strike Warning (1 to 3) ]               [ Submit Exam Payload ]
-         [ Procedural Alert Beep ]                           |
-                     |                                       v
-             +-------+-------+                      [ Backend Evaluation ]
-             |               |                               |
-    (Strikes < 3)     (Strikes == 3)                (Score >= 60% ?)
-             |               |                               |
-             v               v                               +-------+
-       [ Continue ]    [ AUTO-TERMINATE & ]                  |       |
-                       [ DISQUALIFY EXAM  ]               (Yes)     (No)
-                                                             |       |
-                                                             v       v
-                                                       [ Issue Cert ][ Fail ]
+    <h3>2.2 AI-Proctored Anti-Cheating & Malpractice State Machine Flowchart</h3>
+    <p>
+      The examination suite executes a strict client-server validation state machine:
+    </p>
+
+    <div class="ascii-diagram">
+           [ Student Attains 100% Course Module Progress ]
+                                  |
+                                  v
+                  [ Open AI-Proctor Exam Room ]
+                                  |
+                                  v
+         [ Request Camera & Microphone (getUserMedia API) ]
+                                  |
+                                  v
+       [ Mount Live Video Feed + Activate Browser Event Listeners: ]
+       [ - document.addEventListener('visibilitychange')           ]
+       [ - window.addEventListener('blur')                         ]
+       [ - document.addEventListener('copy', 'paste', 'cut')       ]
+       [ - document.addEventListener('contextmenu')                ]
+                                  |
+            +---------------------+---------------------+
+            |                                           |
+  (Tab Switch / Blur Event)                    (Valid MCQ Selections)
+            |                                           |
+            v                                           v
+   [ Beep Alarm Tone ]                        [ Submit Answer Payload ]
+   [ Increment Strike ]                                 |
+            |                                           v
+     +------+------+                          [ Backend Controller ]
+     |             |                          [ - Verify 100% Learn]
+(Strikes < 3) (Strikes == 3)                  [ - Calculate Score %]
+     |             |                                    |
+     v             v                              +-----+-----+
+[ Warning Modal] [ AUTO-TERMINATE & ]             |           |
+[ Return Exam  ] [ DISQUALIFY EXAM  ]       (Score >= 60%) (Score < 60%)
+                                                  |           |
+                                                  v           v
+                                            [ Issue Cert ] [ Fail Attempt ]
     </div>
 
-    <!-- Section 3: Tools & Technologies -->
-    <h2>3. Tools, Technologies & Dependencies</h2>
+    <!-- Chapter 3: Relational Database Design -->
+    <div class="page-break"></div>
+    <h2>3. Relational Database Design & Normalization (3NF)</h2>
+    <p>
+      The database utilizes 9 relational tables structured in <strong>Third Normal Form (3NF)</strong>. Every table is free of transitive dependencies and maintains strict referential integrity with foreign key cascade actions:
+    </p>
+
     <table>
       <thead>
         <tr>
-          <th>Category</th>
-          <th>Technology</th>
-          <th>Version</th>
-          <th>Purpose in Project</th>
+          <th>Table Name</th>
+          <th>Primary Key</th>
+          <th>Foreign Keys</th>
+          <th>Purpose & Stored Fields</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Frontend</strong></td>
-          <td>React</td>
-          <td>18.3.1</td>
-          <td>Declarative UI component architecture with hooks (`useState`, `useEffect`, `useContext`).</td>
+          <td><code>users</code></td>
+          <td><code>id</code></td>
+          <td>None</td>
+          <td>User credentials (email, bcrypt password hash), name, role (<code>student</code> / <code>admin</code>), timestamps.</td>
         </tr>
         <tr>
-          <td><strong>Build Tool</strong></td>
-          <td>Vite</td>
-          <td>5.3.4</td>
-          <td>Ultra-fast HMR and production bundle optimization.</td>
+          <td><code>courses</code></td>
+          <td><code>id</code></td>
+          <td><code>instructor_id -> users(id)</code></td>
+          <td>Course metadata: title, description, category, level, duration, thumbnail URL, price, rating.</td>
         </tr>
         <tr>
-          <td><strong>Icons</strong></td>
-          <td>Lucide React</td>
-          <td>0.400.0</td>
-          <td>Clean, accessible iconography across all dashboards and controls.</td>
+          <td><code>lessons</code></td>
+          <td><code>id</code></td>
+          <td><code>course_id -> courses(id)</code></td>
+          <td>Course video modules: title, video_url, markdown content, duration, order_index.</td>
         </tr>
         <tr>
-          <td><strong>Animations</strong></td>
-          <td>Canvas Confetti</td>
-          <td>1.9.3</td>
-          <td>Celebration particles triggered upon 100% module completion.</td>
+          <td><code>enrollments</code></td>
+          <td><code>id</code></td>
+          <td><code>user_id -> users(id)</code><br><code>course_id -> courses(id)</code></td>
+          <td>Student registration records, completion status boolean, enrolled timestamp.</td>
         </tr>
         <tr>
-          <td><strong>Backend</strong></td>
-          <td>Node.js / Express</td>
-          <td>4.19.2</td>
-          <td>RESTful API routing, middleware chaining, and static SPA serving.</td>
+          <td><code>lesson_progress</code></td>
+          <td><code>id</code></td>
+          <td><code>user_id -> users(id)</code><br><code>lesson_id -> lessons(id)</code></td>
+          <td>Individual module completion checklist status with completed timestamps.</td>
         </tr>
         <tr>
-          <td><strong>Database</strong></td>
-          <td>Better-SQLite3</td>
-          <td>11.8.1</td>
-          <td>Synchronous, high-throughput C++ embedded relational database driver.</td>
+          <td><code>lesson_notes</code></td>
+          <td><code>id</code></td>
+          <td><code>user_id -> users(id)</code><br><code>lesson_id -> lessons(id)</code></td>
+          <td>Personal study scratchpad markdown notes auto-saved per student per module.</td>
         </tr>
         <tr>
-          <td><strong>Security</strong></td>
-          <td>JSONWebToken & Bcrypt</td>
-          <td>9.0.2 / 2.4.3</td>
-          <td>Stateless authorization headers and salted password hashing (work factor 10).</td>
+          <td><code>bookmarks</code></td>
+          <td><code>id</code></td>
+          <td><code>user_id -> users(id)</code><br><code>course_id -> courses(id)</code></td>
+          <td>Student wishlist bookmark records with creation timestamps.</td>
         </tr>
         <tr>
-          <td><strong>Deployment</strong></td>
-          <td>Git / Render / Vercel</td>
-          <td>Latest</td>
-          <td>Version control and single-port cloud web service hosting.</td>
+          <td><code>exam_questions</code></td>
+          <td><code>id</code></td>
+          <td><code>course_id -> courses(id)</code></td>
+          <td>535 seeded certification questions: question text, options A/B/C/D, correct option key, explanation.</td>
+        </tr>
+        <tr>
+          <td><code>exam_submissions</code></td>
+          <td><code>id</code></td>
+          <td><code>user_id -> users(id)</code><br><code>course_id -> courses(id)</code></td>
+          <td>Final exam attempt records: score percentage, passed flag, malpractice violations count, certificate code.</td>
         </tr>
       </tbody>
     </table>
 
-    <!-- Section 4: Step-by-Step Implementation Journey -->
+    <!-- Chapter 4: Tools & Technologies -->
+    <h2>4. Tools, Libraries & Technology Stack Justification</h2>
+
+    <div class="callout">
+      <strong>Why this stack was chosen:</strong> React 18 and Vite deliver instantaneous client-side navigation without bulky overhead. Node.js and Express provide an asynchronous, high-concurrency RESTful API. Better-SQLite3 provides microsecond synchronous SQL query execution without external database process dependencies.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tool / Technology</th>
+          <th>Category</th>
+          <th>Role in Project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>React 18.3</strong></td>
+          <td>Frontend Framework</td>
+          <td>Stateful single-page application with modular component hierarchy.</td>
+        </tr>
+        <tr>
+          <td><strong>Vite 5.3</strong></td>
+          <td>Build Engine</td>
+          <td>Fast development hot module replacement (HMR) and optimized tree-shaken production bundles.</td>
+        </tr>
+        <tr>
+          <td><strong>Better-SQLite3</strong></td>
+          <td>Database Engine</td>
+          <td>C++ SQLite bindings executing prepared SQL statements directly inside Node memory.</td>
+        </tr>
+        <tr>
+          <td><strong>JSONWebToken</strong></td>
+          <td>Security / Auth</td>
+          <td>Signs and verifies cryptographic stateless authentication tokens passed via <code>Authorization: Bearer</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Bcrypt.js</strong></td>
+          <td>Password Hashing</td>
+          <td>One-way adaptive cryptographic hashing with 10 salt rounds protecting user passwords.</td>
+        </tr>
+        <tr>
+          <td><strong>Web Audio API</strong></td>
+          <td>Browser API</td>
+          <td>Procedural dual-tone warning sound generation on tab-switch violations without external MP3 files.</td>
+        </tr>
+        <tr>
+          <td><strong>Page Visibility API</strong></td>
+          <td>Browser API</td>
+          <td>Real-time tracking of browser window focus, tab visibility, and application defocusing.</td>
+        </tr>
+        <tr>
+          <td><strong>Lucide React</strong></td>
+          <td>Iconography</td>
+          <td>Lightweight, scalable vector icons across all pages and UI controls.</td>
+        </tr>
+        <tr>
+          <td><strong>Canvas Confetti</strong></td>
+          <td>UX Animation</td>
+          <td>GPU-rendered particle fireworks triggered upon 100% course completion.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Chapter 5: Detailed Build Journey -->
     <div class="page-break"></div>
-    <h2>4. Step-by-Step Implementation Journey (Built from Scratch)</h2>
+    <h2>5. Detailed Step-by-Step Build Journey from Scratch</h2>
 
-    <h3>Phase 1: Environment & Full-Stack Monorepo Scaffolding</h3>
+    <h3>Step 1: Monorepo Architecture & Package Management</h3>
     <p>
-      The project was structured into a clean monorepo with separate <code>client/</code> and <code>server/</code> trees united by a root <code>package.json</code> capable of simultaneous development and single-command production compilation.
+      Created a unified workspace housing both the <code>client/</code> (React Vite) and <code>server/</code> (Express) codebases. Configured root <code>package.json</code> scripts enabling concurrent local execution (<code>npm run dev</code>) and automated cloud building (<code>npm run build</code>).
     </p>
 
-    <h3>Phase 2: Relational Database Schema Design (3NF)</h3>
+    <h3>Step 2: Database Schema & 107-Course Seeding</h3>
     <p>
-      Created a relational schema across 9 normalized tables with Foreign Key constraints and <code>ON DELETE CASCADE</code> rules. Seeded 107 full courses spanning 8 categories and 535 exam questions.
+      Engineered the database schema in <code>server/src/config/db.js</code>. Designed automated seed scripts (<code>seed_100_courses.js</code> and <code>seed_exam_questions.js</code>) that populated 107 courses across 8 domains and 535 certification questions.
     </p>
 
-    <h3>Phase 3: Secure Express REST API Layer</h3>
+    <h3>Step 3: Secure Express REST API Layer</h3>
     <p>
-      Developed 17 robust endpoints covering Authentication, Course Catalog queries, Bookmarks, Classroom Progress, In-Lesson Study Notes, and AI Exam Submissions. Protected privileged endpoints using role-based access control.
+      Built 17 RESTful endpoints. Implemented authentication middleware (<code>auth.js</code>) that extracts bearer tokens, validates signatures, and enforces Role-Based Access Control (RBAC). Admin endpoints respond with <code>403 Forbidden</code> when accessed by standard student accounts.
     </p>
 
-    <h3>Phase 4: Video Classroom, Study Scratchpad & Sequential Locks</h3>
+    <h3>Step 4: Interactive Video Classroom & Sequential Progression</h3>
     <p>
-      Engineered the interactive learning room with module checklist tracking. Implemented sequential progression logic so that Module $N$ cannot be skipped or unlocked before Module $N-1$ is marked complete. Added auto-saving notes and interactive concept quizzes.
+      Constructed the <code>LearningRoom.jsx</code> classroom. Integrated:
+    </p>
+    <ul>
+      <li><strong>Sequential Progression Algorithm:</strong> Calculated dynamically from completed module IDs.</li>
+      <li><strong>Pre-Content & Prerequisites Module:</strong> Displays toolchain requirements (JDK, VS Code, Git) and course expectations.</li>
+      <li><strong>Personal Study Scratchpad:</strong> Auto-saves code snippets and notes to the database.</li>
+      <li><strong>Concept Check Quizzes:</strong> Instant multiple-choice tests per module.</li>
+    </ul>
+
+    <h3>Step 5: AI-Proctored Anti-Cheating Examination Suite</h3>
+    <p>
+      Engineered <code>ExamProctorRoom.jsx</code>. Integrated <code>navigator.mediaDevices.getUserMedia</code> for camera monitoring, attached event interceptors for <code>visibilitychange</code>, <code>blur</code>, <code>copy</code>, <code>paste</code>, and shortcut keys, and connected the 3-strike malpractice disqualification policy.
     </p>
 
-    <h3>Phase 5: AI-Proctored Examination & Anti-Cheating Suite</h3>
+    <h3>Step 6: 5 Dynamic Theme Palettes & Local Storage Persistence</h3>
     <p>
-      Developed <code>ExamProctorRoom.jsx</code> utilizing browser <code>visibilitychange</code>, <code>window.onblur</code>, Web Audio API procedural beeps, 3-strike malpractice termination, 100% copy-paste interceptors, and verifiable certificate issuance.
+      Constructed an ultra-fast theme engine in <code>index.css</code> using CSS custom properties mapped under <code>data-theme</code> selectors. Designed a top navigation palette dropdown that stores preferences in <code>localStorage</code>.
     </p>
 
-    <h3>Phase 6: 5 Dynamic Theme Palettes</h3>
+    <h3>Step 7: Automated Test Suite & Cloud Deployment</h3>
     <p>
-      Implemented 5 curated color themes using GPU-accelerated CSS custom properties on <code>data-theme</code> selectors with persistent local storage caching.
+      Developed an end-to-end audit script <code>server/test_all_endpoints.js</code> that verifies all 17 endpoints. Configured Express static file serving for single-port deployment on cloud platforms like Render.
     </p>
 
-    <!-- Section 5: Key Code Snippets -->
+    <!-- Chapter 6: Key Code Implementations -->
     <div class="page-break"></div>
-    <h2>5. Key Technical Code Implementations</h2>
+    <h2>6. Core Code Implementations & Technical Analysis</h2>
 
-    <h3>5.1 AI-Proctoring Anti-Cheating & Tab-Switch Interceptor</h3>
-    <p>Listens for window defocusing and navigations, increments strikes, sounds procedural warning audio, and triggers auto-disqualification:</p>
+    <h3>6.1 AI-Proctoring Sensor & Anti-Cheating Engine</h3>
     <pre><code>// client/src/pages/ExamProctorRoom.jsx
 useEffect(() => {
   if (!examStarted || examSubmitted) return;
 
   const handleVisibilityChange = () => {
     if (document.hidden) {
-      triggerMalpracticeStrike('Tab switch detected! You navigated away from the exam.');
+      triggerMalpracticeStrike('Tab switch detected! You navigated away from the exam window.');
     }
   };
 
@@ -493,8 +633,7 @@ useEffect(() => {
   };
 }, [examStarted, examSubmitted, strikes]);</code></pre>
 
-    <h3>5.2 Sequential Learning Lock Check</h3>
-    <p>Prevents skipping modules before prerequisites are completed:</p>
+    <h3>6.2 Sequential Learning Lock Check</h3>
     <pre><code>// client/src/pages/LearningRoom.jsx
 const isLessonUnlocked = (index) => {
   if (index === 0) return true; // First lesson is always unlocked
@@ -502,86 +641,127 @@ const isLessonUnlocked = (index) => {
   return prevLesson ? completedLessonIds.has(prevLesson.id) : false;
 };</code></pre>
 
-    <h3>5.3 Dynamic CSS Variable Theme Engine</h3>
-    <pre><code>/* client/src/styles/index.css */
-:root, [data-theme="midnight"] {
-  --bg-primary: #0a0d17;
-  --accent-primary: #6366f1;
-  --accent-cyan: #06b6d4;
-}
+    <h3>6.3 JWT Authentication & RBAC Middleware</h3>
+    <pre><code>// server/src/middleware/auth.js
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
+  }
+  try {
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+  }
+};
 
-[data-theme="emerald"] {
-  --bg-primary: #04120e;
-  --accent-primary: #10b981;
-  --accent-secondary: #34d399;
-}
+const authorize = (roles = []) => (req, res, next) => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    return res.status(403).json({ success: false, message: 'Forbidden. Insufficient permissions.' });
+  }
+  next();
+};</code></pre>
 
-[data-theme="amethyst"] {
-  --bg-primary: #0c0717;
-  --accent-primary: #a855f7;
-  --accent-secondary: #ec4899;
-}</code></pre>
+    <!-- Chapter 7: Commands & API Audit -->
+    <div class="page-break"></div>
+    <h2>7. Terminal Commands & API Audit Verification</h2>
 
-    <!-- Section 6: Commands & Setup Guide -->
-    <h2>6. Complete Terminal Commands & Execution Guide</h2>
+    <h3>7.1 Project Execution Commands</h3>
     <table>
       <thead>
         <tr>
           <th>Task</th>
-          <th>Terminal Command</th>
+          <th>Command</th>
           <th>Description</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Install All</strong></td>
+          <td><strong>Install Dependencies</strong></td>
           <td><code>npm run install:all</code></td>
-          <td>Installs root, server, and client npm dependencies.</td>
+          <td>Installs root, backend, and frontend packages.</td>
         </tr>
         <tr>
-          <td><strong>Start Dev</strong></td>
+          <td><strong>Launch Dev Server</strong></td>
           <td><code>npm run dev</code></td>
-          <td>Concurrently launches Express (5000) & React Vite (3000).</td>
+          <td>Launches Express (port 5000) & React Vite (port 3000) concurrently.</td>
         </tr>
         <tr>
-          <td><strong>Run Audit</strong></td>
+          <td><strong>Run Automated Audit</strong></td>
           <td><code>node server/test_all_endpoints.js</code></td>
-          <td>Audits all 17 REST API endpoints and prints pass statuses.</td>
+          <td>Runs automated HTTP assertions across all 17 system endpoints.</td>
         </tr>
         <tr>
-          <td><strong>Re-seed DB</strong></td>
+          <td><strong>Re-seed Database</strong></td>
           <td><code>npm run seed</code></td>
-          <td>Reinitializes SQLite tables and seeds 107 courses + 535 questions.</td>
+          <td>Seeds 107 courses and 535 certification exam questions.</td>
         </tr>
         <tr>
-          <td><strong>Build Prod</strong></td>
+          <td><strong>Build for Production</strong></td>
           <td><code>npm run build</code></td>
-          <td>Compiles React Vite client into production distribution bundle.</td>
+          <td>Compiles React Vite client into production bundle.</td>
         </tr>
         <tr>
-          <td><strong>Start Prod</strong></td>
+          <td><strong>Start Production Server</strong></td>
           <td><code>npm start</code></td>
-          <td>Launches production Express server bound to <code>0.0.0.0</code>.</td>
+          <td>Launches Express server bound to <code>0.0.0.0</code>.</td>
         </tr>
       </tbody>
     </table>
 
-    <!-- Section 7: Verification Results & Conclusion -->
-    <h2>7. Automated Verification Results</h2>
-    <div class="card card-emerald">
-      <h3 style="color: #065f46; margin-top: 0;">✅ 17/17 API Endpoints Verified Passing</h3>
-      <p style="color: #047857; margin-bottom: 0;">
-        Full automated test audit executed via <code>server/test_all_endpoints.js</code>. All endpoints (Auth, Courses, Bookmarks, Classroom, Notes, AI Proctored Exams, and Admin KPIs) passed with <code>200 OK</code> and <code>201 Created</code>.
-      </p>
-    </div>
+    <h3>7.2 17-Endpoint Automated Verification Table</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Method</th>
+          <th>Endpoint</th>
+          <th>Access</th>
+          <th>Description & Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><code>GET</code></td><td><code>/api/health</code></td><td>Public</td><td>Server health & timestamp (200 OK)</td></tr>
+        <tr><td>2</td><td><code>POST</code></td><td><code>/api/auth/register</code></td><td>Public</td><td>Student account creation (201 Created)</td></tr>
+        <tr><td>3</td><td><code>POST</code></td><td><code>/api/auth/login</code></td><td>Public</td><td>Student/Admin JWT authentication (200 OK)</td></tr>
+        <tr><td>4</td><td><code>GET</code></td><td><code>/api/auth/me</code></td><td>Authenticated</td><td>Current session verification (200 OK)</td></tr>
+        <tr><td>5</td><td><code>GET</code></td><td><code>/api/courses/categories</code></td><td>Public</td><td>8 domain categories listing (200 OK)</td></tr>
+        <tr><td>6</td><td><code>GET</code></td><td><code>/api/courses</code></td><td>Public</td><td>Catalog search & filter queries (200 OK)</td></tr>
+        <tr><td>7</td><td><code>GET</code></td><td><code>/api/courses/:id</code></td><td>Public</td><td>Course syllabus & details (200 OK)</td></tr>
+        <tr><td>8</td><td><code>POST</code></td><td><code>/api/courses/:id/bookmark</code></td><td>Student</td><td>Wishlist heart bookmark toggle (200 OK)</td></tr>
+        <tr><td>9</td><td><code>GET</code></td><td><code>/api/courses/my/bookmarks</code></td><td>Student</td><td>User saved bookmarks list (200 OK)</td></tr>
+        <tr><td>10</td><td><code>POST</code></td><td><code>/api/enrollments</code></td><td>Student</td><td>Enroll in selected course (200 OK)</td></tr>
+        <tr><td>11</td><td><code>GET</code></td><td><code>/api/enrollments/my</code></td><td>Student</td><td>Active & completed enrollments (200 OK)</td></tr>
+        <tr><td>12</td><td><code>GET</code></td><td><code>/api/enrollments/courses/:id/learn</code></td><td>Student</td><td>Classroom syllabus & progress (200 OK)</td></tr>
+        <tr><td>13</td><td><code>POST</code></td><td><code>/api/enrollments/courses/:id/lessons/:id/complete</code></td><td>Student</td><td>Lesson completion toggle (200 OK)</td></tr>
+        <tr><td>14</td><td><code>POST</code></td><td><code>/api/enrollments/lessons/:id/notes</code></td><td>Student</td><td>Save personal study notes (200 OK)</td></tr>
+        <tr><td>15</td><td><code>GET</code></td><td><code>/api/enrollments/lessons/:id/notes</code></td><td>Student</td><td>Fetch saved lesson notes (200 OK)</td></tr>
+        <tr><td>16</td><td><code>GET</code></td><td><code>/api/enrollments/courses/:id/exam</code></td><td>Student</td><td>Fetch 5 exam MCQs (200 OK)</td></tr>
+        <tr><td>17</td><td><code>POST</code></td><td><code>/api/enrollments/courses/:id/exam/submit</code></td><td>Student</td><td>Submit exam & issue certificate (200 OK)</td></tr>
+      </tbody>
+    </table>
 
-    <h2>8. Conclusion</h2>
+    <!-- Chapter 8: Conclusion -->
+    <h2>8. Conclusion & Future Enhancements</h2>
     <p>
-      The <strong>Coursify</strong> platform provides a complete, scalable, and human-crafted solution for modern online education. With its rich catalog of 107 courses, sequential module locks, study notes scratchpads, 5 customizable dynamic themes, and AI-proctored anti-cheating examination system, it stands as a production-ready system ready for academic viva defense and real-world deployment.
+      The <strong>Coursify</strong> project successfully implements a modern, resilient, and human-crafted educational platform. By integrating sequential progression locking, in-lesson study scratchpads, 5 dynamic theme palettes, and an AI-proctored examination suite with 3-strike malpractice termination, it establishes a reliable paradigm for digital course delivery and authentic certification.
     </p>
 
-    <div style="margin-top: 3rem; text-align: center; border-top: 1px solid var(--border); padding-top: 1.5rem; color: var(--text-muted); font-size: 0.85rem;">
-      <p>Report compiled by <strong>Dhanush</strong> &bull; Coursify Online Course Management System &bull; 2026</p>
+    <div class="callout callout-emerald">
+      <strong>Future Roadmap Enhancements:</strong>
+      <ol style="margin-top: 0.5rem; margin-bottom: 0;">
+        <li>AI Facial Recognition for continuous biometrics verification during examinations.</li>
+        <li>Peer-to-peer real-time study discussion rooms using WebSockets.</li>
+        <li>Live screen sharing recording directly saved to cloud object storage (S3/GCS).</li>
+      </ol>
+    </div>
+
+    <div class="footer-stamp">
+      <p><strong>Coursify E-Learning Platform &bull; Engineering Dissertation</strong></p>
+      <p>Prepared and Submitted by <strong>Dhanush</strong> &bull; 2026</p>
     </div>
   </div>
 
