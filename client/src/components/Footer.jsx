@@ -1,7 +1,7 @@
 import React from 'react';
-import { GraduationCap, Github, Shield, Heart, Sparkles } from 'lucide-react';
+import { GraduationCap, Github, Shield, Heart, Sparkles, ShieldCheck } from 'lucide-react';
 
-export default function Footer({ onNavigate }) {
+export default function Footer({ onNavigate, onOpenVerifyModal }) {
   return (
     <footer style={{
       marginTop: '5rem',
@@ -48,6 +48,11 @@ export default function Footer({ onNavigate }) {
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
               <li><a href="#catalog" onClick={(e) => { e.preventDefault(); onNavigate('catalog'); }}>Course Catalog</a></li>
               <li><a href="#mylearning" onClick={(e) => { e.preventDefault(); onNavigate('student-dashboard'); }}>Student Dashboard</a></li>
+              <li>
+                <a href="#verify" onClick={(e) => { e.preventDefault(); if (onOpenVerifyModal) onOpenVerifyModal(); }} style={{ color: 'var(--accent-emerald)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <ShieldCheck size={14} /> Official Certificate Verifier
+                </a>
+              </li>
               <li><a href="#admin" onClick={(e) => { e.preventDefault(); onNavigate('admin-dashboard'); }}>Admin Portal</a></li>
               <li><a href="#apis" onClick={(e) => { e.preventDefault(); onNavigate('api-docs'); }}>Interactive REST API Explorer</a></li>
             </ul>
@@ -57,7 +62,7 @@ export default function Footer({ onNavigate }) {
           <div>
             <h4 style={{ fontSize: '0.95rem', color: '#fff', marginBottom: '1rem' }}>Technology Stack</h4>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-              {['React 18', 'Vite', 'Express.js', 'Better-SQLite3', 'JWT Auth', 'Bcrypt.js', 'Vanilla CSS Tokens', 'RESTful API'].map((t) => (
+              {['React 18', 'Vite', 'Express.js', 'Better-SQLite3', 'JWT Auth', 'Bcrypt.js', 'Vanilla CSS Tokens', 'RESTful API', 'Canvas Confetti'].map((t) => (
                 <span key={t} className="badge badge-indigo" style={{ fontSize: '0.7rem' }}>
                   {t}
                 </span>
@@ -94,12 +99,12 @@ export default function Footer({ onNavigate }) {
           color: 'var(--text-muted)'
         }}>
           <div>
-            © {new Date().getFullYear()} Coursify Course Management System. All rights reserved.
+            © {new Date().getFullYear()} Coursify Course Management System. Author: Dhanush.
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <span>Relational SQL Schema v1.0</span>
             <span>•</span>
-            <span>REST API v1</span>
+            <span>REST API v2.0</span>
           </div>
         </div>
       </div>

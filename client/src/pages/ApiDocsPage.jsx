@@ -12,7 +12,10 @@ import {
   Layers,
   ChevronRight,
   RefreshCw,
-  Info
+  Info,
+  FolderGit2,
+  MessageSquare,
+  Award
 } from 'lucide-react';
 
 export default function ApiDocsPage() {
@@ -91,21 +94,36 @@ export default function ApiDocsPage() {
       auth: true
     },
     {
-      group: 'Course Catalog & Syllabus',
+      group: 'Course Resources & Q&A Discussions',
+      method: 'GET',
+      path: '/api/courses/1/resources',
+      desc: 'Fetch downloadable source code files, cheat sheets, and architecture diagrams.',
+      auth: false
+    },
+    {
+      group: 'Course Resources & Q&A Discussions',
+      method: 'GET',
+      path: '/api/courses/1/discussions',
+      desc: 'Retrieve community Q&A discussion threads and answers.',
+      auth: false
+    },
+    {
+      group: 'Course Resources & Q&A Discussions',
       method: 'POST',
-      path: '/api/courses',
-      desc: 'Create and publish a new course with syllabus modules (Admin only).',
+      path: '/api/courses/1/discussions',
+      desc: 'Post a new doubt or question in the course discussion forum.',
       auth: true,
-      role: 'admin',
       body: {
-        title: 'Microservices with Spring Boot & Docker',
-        description: 'Design distributed resilient systems using Java Spring Boot.',
-        instructor: 'Dr. Michael Chen',
-        category_id: 1,
-        level: 'Advanced',
-        duration: '16 Hours',
-        thumbnail: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800'
+        title: 'How does Spring Boot auto-configuration work internally?',
+        content: 'Can someone explain the role of @EnableAutoConfiguration and Spring factories loader?'
       }
+    },
+    {
+      group: 'Course Resources & Q&A Discussions',
+      method: 'POST',
+      path: '/api/courses/discussions/1/upvote',
+      desc: 'Upvote a helpful question or answer in the forum.',
+      auth: true
     },
     {
       group: 'Enrollment & Progress Tracking',
@@ -152,8 +170,29 @@ export default function ApiDocsPage() {
       desc: 'Save student personal study scratchpad notes for a lesson.',
       auth: true,
       body: {
-        note_text: 'JVM JIT Compiler compiles frequently executed bytecode to native machine code.'
+        note_text: 'JVM JIT Compiler compiles frequently executed bytecode to native machine code for faster runtime execution.'
       }
+    },
+    {
+      group: 'Certification & Analytics',
+      method: 'GET',
+      path: '/api/enrollments/courses/1/exam',
+      desc: 'Fetch final certification exam questions for a completed course.',
+      auth: true
+    },
+    {
+      group: 'Certification & Analytics',
+      method: 'GET',
+      path: '/api/enrollments/verify-certificate/CERT-DHANUSH-11-8178',
+      desc: 'Public verification of student credentials and issuing authenticity.',
+      auth: false
+    },
+    {
+      group: 'Certification & Analytics',
+      method: 'GET',
+      path: '/api/enrollments/my/analytics',
+      desc: 'Retrieve student learning streaks, study hours, notes count, and skill badges.',
+      auth: true
     },
     {
       group: 'Admin Analytics & Management',
@@ -250,7 +289,7 @@ export default function ApiDocsPage() {
           <h1 style={{ fontSize: '2rem' }}>REST API Documentation & Explorer</h1>
         </div>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-          Test all endpoints in real-time with editable JSON payloads and inspect relational backend responses.
+          Test all {endpoints.length} endpoints in real-time with editable JSON payloads and inspect relational backend responses.
         </p>
 
         {!user && (
@@ -298,9 +337,9 @@ export default function ApiDocsPage() {
               return (
                 <div
                   key={idx}
-                  onClick={() => { setSelectedEndpoint(idx); }}
+                  onClick={() => setSelectedEndpoint(idx)}
                   style={{
-                    padding: '0.85rem 1rem',
+                    padding: '0.75rem 1rem',
                     borderBottom: '1px solid var(--border-color)',
                     background: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
                     borderLeft: isSelected ? '3px solid var(--accent-primary)' : '3px solid transparent',
@@ -308,191 +347,215 @@ export default function ApiDocsPage() {
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
                     <span style={{
                       fontSize: '0.7rem',
-                      fontWeight: 700,
-                      padding: '0.15rem 0.4rem',
+                      fontWeight: 800,
+                      padding: '0.1rem 0.4rem',
                       borderRadius: '4px',
-                      background: ep.method === 'GET' ? 'rgba(16, 185, 129, 0.2)' : ep.method === 'POST' ? 'rgba(99, 102, 241, 0.2)' : 'rgba(245, 158, 11, 0.2)',
-                      color: ep.method === 'GET' ? '#6ee7b7' : ep.method === 'POST' ? '#a5b4fc' : '#fcd34d'
+                      fontFamily: 'var(--font-mono)',
+                      background: ep.method === 'GET' ? 'rgba(16, 185, 129, 0.15)' : ep.method === 'POST' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                      color: ep.method === 'GET' ? '#34d399' : ep.method === 'POST' ? '#60a5fa' : '#fbbf24'
                     }}>
                       {ep.method}
                     </span>
-                    <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: isSelected ? '#fff' : 'var(--text-primary)', wordBreak: 'break-all' }}>
-                      {ep.path.split('?')[0]}
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {ep.group}
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {ep.desc}
-                  </p>
+                  <div style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.82rem',
+                    color: isSelected ? '#fff' : 'var(--text-secondary)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
+                    {ep.path}
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Selected Endpoint Runner & Response Viewer */}
+        {/* Request / Response Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {/* Header Card for Current Endpoint */}
-          <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-                  <span style={{
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    padding: '0.25rem 0.6rem',
-                    borderRadius: 'var(--radius-sm)',
-                    background: current.method === 'GET' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(99, 102, 241, 0.2)',
-                    color: current.method === 'GET' ? '#6ee7b7' : '#a5b4fc'
-                  }}>
-                    {current.method}
-                  </span>
-                  <span style={{ fontSize: '1.1rem', fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#fff' }}>
-                    {current.path}
-                  </span>
-                </div>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{current.desc}</p>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                {current.role === 'admin' && user?.role !== 'admin' && (
-                  <button
-                    onClick={async () => {
-                      await demoLogin('admin');
-                      showToast('Switched to Demo Admin account! You can now execute Admin endpoints.', 'success');
-                    }}
-                    className="btn btn-secondary btn-sm"
-                    style={{ border: '1px solid var(--accent-amber)', color: '#fcd34d', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-                    title="Logs in as admin@coursify.com to grant required admin privileges"
-                  >
-                    ⚡ Switch to Demo Admin
-                  </button>
-                )}
-
-                <button
-                  onClick={handleExecuteRequest}
-                  disabled={requestLoading}
-                  className="btn btn-primary"
-                  style={{ padding: '0.65rem 1.25rem' }}
-                >
-                  <Send size={15} /> {requestLoading ? 'Sending...' : 'Test Request'}
-                </button>
-              </div>
-            </div>
-
-            {/* Role Warning for Admin Endpoints */}
-            {current.role === 'admin' && user?.role !== 'admin' && (
-              <div style={{
-                padding: '0.6rem 0.85rem',
-                borderRadius: 'var(--radius-sm)',
-                background: 'rgba(245, 158, 11, 0.1)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                fontSize: '0.8rem',
-                color: '#fde68a',
-                marginBottom: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem'
-              }}>
-                <ShieldCheck size={14} color="var(--accent-amber)" />
-                <span>
-                  <strong>Role-Based Access Control (RBAC):</strong> This endpoint requires <code>role: admin</code>. If tested as a student, the server will return <code>403 Forbidden</code>. Click <strong>"⚡ Switch to Demo Admin"</strong> above to test with admin rights.
+          {/* Endpoint Details Card */}
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 800,
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: 'var(--radius-sm)',
+                  fontFamily: 'var(--font-mono)',
+                  background: current.method === 'GET' ? 'rgba(16, 185, 129, 0.2)' : current.method === 'POST' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                  color: current.method === 'GET' ? '#34d399' : current.method === 'POST' ? '#60a5fa' : '#fbbf24'
+                }}>
+                  {current.method}
+                </span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 600, color: '#fff' }}>
+                  {current.path}
                 </span>
               </div>
-            )}
 
-            {/* Auth & Headers Meta */}
-            <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)', flexWrap: 'wrap' }}>
-              <span>
-                Auth Required: <strong>{current.auth ? (current.role ? `Yes (${current.role} role)` : 'Yes (JWT Bearer)') : 'No (Public)'}</strong>
-              </span>
-              <span>•</span>
-              <span>Logged-in User: <strong>{user ? `${user.name} (${user.role})` : 'None (Unauthenticated)'}</strong></span>
-              <span>•</span>
-              <span>Content-Type: <code>application/json</code></span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                {current.auth && (
+                  <span className="badge badge-amber" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <ShieldCheck size={13} /> Bearer JWT Required
+                  </span>
+                )}
+                {current.role && (
+                  <span className="badge badge-purple">
+                    Role: {current.role}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Request Payload Editor (if applicable) */}
-          {current.body && (
-            <div className="card" style={{ padding: '1.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>Editable Request JSON Body</span>
-                
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+              {current.desc}
+            </p>
+
+            {/* Request Body Editor (if POST / PUT) */}
+            {(current.method === 'POST' || current.method === 'PUT') && (
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    JSON Request Payload:
+                  </span>
                   {current.path === '/api/auth/register' && (
                     <button
                       onClick={generateFreshEmail}
-                      className="btn btn-secondary btn-sm"
-                      style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
+                      className="btn btn-ghost btn-sm"
+                      style={{ fontSize: '0.75rem', padding: '0.15rem 0.4rem', color: 'var(--accent-cyan)' }}
                     >
-                      <RefreshCw size={12} /> New Test User
+                      <RefreshCw size={12} /> Generate Unique Email
                     </button>
                   )}
-                  <button
-                    onClick={() => copySnippet(editableBody)}
-                    className="btn btn-outline btn-sm"
-                    style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
-                  >
-                    {copied ? <Check size={12} color="var(--accent-emerald)" /> : <Copy size={12} />} Copy JSON
-                  </button>
                 </div>
+                <textarea
+                  value={editableBody}
+                  onChange={(e) => setEditableBody(e.target.value)}
+                  className="form-textarea"
+                  rows={current.body && Object.keys(current.body).length > 4 ? 8 : 5}
+                  style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}
+                />
+              </div>
+            )}
+
+            {/* Action Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Headers: <code>Content-Type: application/json</code>
+                {token && current.auth && (
+                  <span style={{ marginLeft: '0.5rem', color: 'var(--accent-emerald)' }}>
+                    • Authorization: Bearer {token.slice(0, 12)}...
+                  </span>
+                )}
               </div>
 
-              <textarea
-                className="form-textarea"
-                rows={7}
-                value={editableBody}
-                onChange={(e) => setEditableBody(e.target.value)}
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.85rem',
-                  color: '#a5b4fc',
-                  background: 'var(--bg-primary)'
-                }}
-              />
+              <button
+                onClick={handleExecuteRequest}
+                disabled={requestLoading}
+                className="btn btn-primary"
+                style={{ padding: '0.65rem 1.5rem' }}
+              >
+                {requestLoading ? (
+                  <RefreshCw size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
+                <span>{requestLoading ? 'Executing...' : 'Send Request'}</span>
+              </button>
             </div>
-          )}
+          </div>
 
-          {/* Live Response Viewer */}
-          <div className="card" style={{ padding: '1.25rem', minHeight: '220px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <Terminal size={16} color="var(--accent-cyan)" />
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>Live Server Response</span>
+          {/* Live Response Panel */}
+          {apiResponse && (
+            <div className="card" style={{ padding: '1.5rem', animation: 'fadeIn 0.2s ease' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                    HTTP RESPONSE
+                  </span>
+                  <span className={`badge ${apiResponse.ok ? 'badge-emerald' : 'badge-rose'}`} style={{ fontFamily: 'var(--font-mono)' }}>
+                    Status: {apiResponse.status} {apiResponse.ok ? 'OK' : 'Error'}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => copySnippet(JSON.stringify(apiResponse.data, null, 2))}
+                  className="btn btn-secondary btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                >
+                  {copied ? <Check size={13} color="var(--accent-emerald)" /> : <Copy size={13} />}
+                  <span>{copied ? 'Copied' : 'Copy JSON'}</span>
+                </button>
               </div>
 
-              {apiResponse && (
-                <span className={`badge ${apiResponse.ok ? 'badge-emerald' : 'badge-rose'}`} style={{ fontSize: '0.75rem' }}>
-                  HTTP {apiResponse.status} {apiResponse.ok ? 'OK' : 'Response'}
-                </span>
-              )}
-            </div>
-
-            {requestLoading ? (
-              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                Executing HTTP request against Express backend...
-              </div>
-            ) : apiResponse ? (
               <pre style={{
                 background: 'var(--bg-primary)',
                 padding: '1.25rem',
                 borderRadius: 'var(--radius-md)',
+                overflowX: 'auto',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.85rem',
-                color: apiResponse.ok ? '#86efac' : '#fca5a5',
-                overflowX: 'auto',
+                color: apiResponse.ok ? '#a7f3d0' : '#fecdd3',
+                lineHeight: 1.5,
+                border: '1px solid var(--border-color)',
                 maxHeight: '400px'
               }}>
                 {JSON.stringify(apiResponse.data, null, 2)}
               </pre>
-            ) : (
-              <div style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                Click <strong>"Test Request"</strong> above to send a live HTTP request to the Express server.
+            </div>
+          )}
+
+          {/* cURL Equivalent Card */}
+          <div className="card" style={{ padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
+                <Terminal size={14} /> Equivalent cURL Command:
               </div>
-            )}
+              <button
+                onClick={() => {
+                  let cmd = `curl -X ${current.method} "http://localhost:5000${current.path}" \\\n  -H "Content-Type: application/json"`;
+                  if (current.auth && token) {
+                    cmd += ` \\\n  -H "Authorization: Bearer ${token}"`;
+                  }
+                  if (editableBody && (current.method === 'POST' || current.method === 'PUT')) {
+                    cmd += ` \\\n  -d '${editableBody.replace(/\n/g, '')}'`;
+                  }
+                  copySnippet(cmd);
+                }}
+                className="btn btn-ghost btn-sm"
+                style={{ fontSize: '0.75rem' }}
+              >
+                Copy cURL
+              </button>
+            </div>
+
+            <pre style={{
+              background: 'var(--bg-primary)',
+              padding: '0.85rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.8rem',
+              color: '#93c5fd',
+              overflowX: 'auto',
+              border: '1px solid var(--border-color)',
+              margin: 0
+            }}>
+              {`curl -X ${current.method} "http://localhost:5000${current.path}" \\\n  -H "Content-Type: application/json"${
+                current.auth && token ? ` \\\n  -H "Authorization: Bearer ${token.slice(0, 15)}..."` : ''
+              }${
+                editableBody && (current.method === 'POST' || current.method === 'PUT')
+                  ? ` \\\n  -d '${editableBody.replace(/\n\s*/g, ' ')}'`
+                  : ''
+              }`}
+            </pre>
           </div>
         </div>
       </div>

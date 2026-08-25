@@ -11,6 +11,10 @@ dist/
 .env
 server/.env.local
 
+# Database temporary WAL locks
+*.sqlite-wal
+*.sqlite-shm
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

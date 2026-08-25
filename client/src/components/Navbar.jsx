@@ -13,10 +13,11 @@ import {
   Menu,
   X,
   Palette,
-  Check
+  Check,
+  ShieldCheck
 } from 'lucide-react';
 
-export default function Navbar({ activePage, setActivePage }) {
+export default function Navbar({ activePage, setActivePage, onOpenVerifyModal }) {
   const { user, logout, openAuthModal, demoLogin } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -134,6 +135,19 @@ export default function Navbar({ activePage, setActivePage }) {
               My Learning
             </button>
           )}
+
+          <button
+            onClick={onOpenVerifyModal}
+            className="btn btn-outline"
+            style={{ 
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              color: 'var(--accent-emerald)',
+              background: 'rgba(16, 185, 129, 0.06)'
+            }}
+          >
+            <ShieldCheck size={16} />
+            Verify Certificate
+          </button>
 
           {user && user.role === 'admin' && (
             <button
@@ -408,6 +422,13 @@ export default function Navbar({ activePage, setActivePage }) {
               <LayoutDashboard size={16} /> My Learning
             </button>
           )}
+          <button 
+            onClick={() => { setMobileMenuOpen(false); onOpenVerifyModal(); }}
+            className="btn btn-outline"
+            style={{ justifyContent: 'flex-start', color: 'var(--accent-emerald)' }}
+          >
+            <ShieldCheck size={16} /> Verify Certificate
+          </button>
           {user && user.role === 'admin' && (
             <button 
               onClick={() => handleNavClick('admin-dashboard')}

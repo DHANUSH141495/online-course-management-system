@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import CertificateModal from '../components/CertificateModal';
+import CourseDiscussions from '../components/CourseDiscussions';
+import CourseResources from '../components/CourseResources';
 import confetti from 'canvas-confetti';
 import { 
   ArrowLeft, 
@@ -20,7 +22,11 @@ import {
   Lock,
   GraduationCap,
   ListChecks,
-  AlertCircle
+  AlertCircle,
+  FolderGit2,
+  MessageSquare,
+  Bot,
+  Send
 } from 'lucide-react';
 
 export default function LearningRoom({ courseId, onBack, onOpenExam }) {
@@ -35,7 +41,7 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
   const [toggling, setToggling] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
 
-  // In-Lesson Tabs: 'precontent' | 'notes' | 'mynotes' | 'quiz'
+  // In-Lesson Tabs: 'precontent' | 'notes' | 'mynotes' | 'quiz' | 'resources' | 'discussions' | 'ai-buddy'
   const [activeTab, setActiveTab] = useState('notes');
   const [personalNotes, setPersonalNotes] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
@@ -44,6 +50,13 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
   // Quiz state
   const [quizSelectedOption, setQuizSelectedOption] = useState(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  // AI Study Assistant state
+  const [aiQuestion, setAiQuestion] = useState('');
+  const [aiMessages, setAiMessages] = useState([
+    { role: 'assistant', text: '👋 Hi! I am your AI Study Buddy. Ask me any doubt about this lesson, request a code example, or ask for an exam tip!' }
+  ]);
+  const [aiThinking, setAiThinking] = useState(false);
 
   const fetchClassroom = async () => {
     setLoading(true);
@@ -175,6 +188,13 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
         correctIndex: 2,
         explanation: '`useEffect` lets you synchronize a component with external systems, perform API calls, and clean up subscriptions.'
       };
+    } else if (course.title.toLowerCase().includes('python')) {
+      return {
+        question: 'Which Pandas method is commonly used to load CSV data into a 2D DataFrame?',
+        options: ['pd.read_csv()', 'pd.load_table()', 'pd.open_file()', 'pd.from_csv()'],
+        correctIndex: 0,
+        explanation: '`pandas.read_csv()` reads a comma-separated values (csv) file into a Pandas DataFrame.'
+      };
     } else {
       return {
         question: 'What is the primary objective of Database Normalization (e.g. 1NF to 3NF)?',
@@ -183,6 +203,35 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
         explanation: 'Normalization organizes columns and tables in a relational database to minimize data duplication and prevent anomalies.'
       };
     }
+  };
+
+  // AI Study Buddy Interactive handler
+  const handleAskAi = (e) => {
+    e.preventDefault();
+    if (!aiQuestion.trim() || aiThinking) return;
+
+    const userQ = aiQuestion.trim();
+    setAiMessages(prev => [...prev, { role: 'user', text: userQ }]);
+    setAiQuestion('');
+    setAiThinking(true);
+
+    setTimeout(() => {
+      let aiAns = '';
+      const lower = userQ.toLowerCase();
+
+      if (lower.includes('exam') || lower.includes('pass') || lower.includes('certification')) {
+        aiAns = `💡 **Exam Strategy Tip for ${course.title}**:\n- Review the core concepts in modules 1 through ${lessons.length}.\n- You need at least 60% score to pass.\n- Make sure your webcam is enabled and you remain on the tab during proctoring to prevent warnings!`;
+      } else if (lower.includes('code') || lower.includes('example') || lower.includes('syntax')) {
+        aiAns = `💻 **Quick Code Breakdown for ${activeLesson.title}**:\n\`\`\`javascript\n// Practice snippet related to this concept\nconst executeModule = async () => {\n  console.log("Mastering ${activeLesson.title}");\n  return { success: true, timestamp: Date.now() };\n};\n\`\`\`\nTry running this in your local console!`;
+      } else if (lower.includes('explain') || lower.includes('what is') || lower.includes('how')) {
+        aiAns = `🧠 **Concept Explanation**:\nRegarding "${userQ}":\nIn ${course.title}, this refers to how system components communicate efficiently while preserving encapsulation and scalability. Review the syllabus notes tab for step-by-step code demonstrations!`;
+      } else {
+        aiAns = `✨ Great question! In **${activeLesson.title}**, focusing on clean separation of concerns and understanding the lifecycle flow is essential. Let me know if you want a detailed code snippet or an interview practice question on this topic!`;
+      }
+
+      setAiMessages(prev => [...prev, { role: 'assistant', text: aiAns }]);
+      setAiThinking(false);
+    }, 900);
   };
 
   if (loading) {
@@ -198,90 +247,95 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
   const quiz = getQuizData();
 
   return (
-    <div style={{ minHeight: 'calc(100vh - 72px)', background: '#07090e' }}>
+    <div style={{ background: 'var(--bg-primary)', minHeight: 'calc(100vh - 70px)' }}>
       {/* Top Classroom Bar */}
       <div style={{
         background: 'var(--bg-secondary)',
         borderBottom: '1px solid var(--border-color)',
-        padding: '0.75rem 1.5rem',
+        padding: '0.85rem 1.5rem',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'space-between',
+        alignItems: 'center',
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={onBack} className="btn btn-secondary btn-sm">
-            <ArrowLeft size={16} /> Exit Classroom
+          <button
+            onClick={onBack}
+            className="btn btn-ghost btn-sm"
+            style={{ padding: '0.4rem 0.6rem', color: 'var(--text-muted)' }}
+          >
+            <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 style={{ fontSize: '1.05rem', color: '#fff' }}>{course.title}</h2>
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 600, color: '#fff' }}>{course.title}</h2>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Instructor: {course.instructor}</span>
           </div>
         </div>
 
-        {/* Progress, Exam & Certificate Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: '180px' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.2rem' }}>
-                <span>Your Progress</span>
-                <span style={{ color: progressPercent === 100 ? 'var(--accent-emerald)' : 'var(--accent-primary)' }}>
-                  {progressPercent}%
-                </span>
-              </div>
-              <div className="progress-bar-bg" style={{ height: '6px' }}>
-                <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} />
-              </div>
+        {/* Progress & Certificate/Exam Action */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              Course Progress: <strong style={{ color: 'var(--accent-emerald)' }}>{progressPercent}%</strong>
+            </span>
+            <div className="progress-bar-bg" style={{ width: '100px', height: '6px' }}>
+              <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} />
             </div>
           </div>
 
-          {progressPercent === 100 && onOpenExam && (
-            <button 
-              onClick={() => onOpenExam(course.id)}
-              className="btn btn-primary btn-sm"
-              style={{
-                background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
-                boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem'
-              }}
+          {progressPercent === 100 ? (
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={() => onOpenExam(course.id)}
+                className="btn btn-primary btn-sm"
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem'
+                }}
+              >
+                <Award size={16} /> Take Certification Exam
+              </button>
+              <button
+                onClick={openCertificate}
+                className="btn btn-secondary btn-sm"
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+              >
+                <GraduationCap size={16} /> View Certificate
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => showToast(`Complete all modules to 100% to unlock the exam (${completedLessonIds.size}/${lessons.length} done).`, 'info')}
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: 0.7 }}
             >
-              <GraduationCap size={16} /> Take AI-Proctored Exam
-            </button>
-          )}
-
-          {progressPercent === 100 && (
-            <button 
-              onClick={openCertificate}
-              className="btn btn-primary btn-sm"
-              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none' }}
-            >
-              <Award size={15} /> Certificate
+              <Lock size={14} /> Exam Locked ({progressPercent}%)
             </button>
           )}
         </div>
       </div>
 
-      {/* Main Two-Column View */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', minHeight: 'calc(100vh - 130px)' }}>
-        {/* Left Lesson Player & Content */}
-        <div style={{ padding: '2rem', overflowY: 'auto', maxHeight: 'calc(100vh - 130px)' }}>
-          {/* Video Player */}
+      {/* Main Classroom Layout: Video & Content on Left, Sticky Sidebar on Right */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', minHeight: 'calc(100vh - 130px)' }}>
+        {/* Left Video & Content Player */}
+        <div style={{ padding: '1.5rem 2rem', overflowY: 'auto' }}>
+          {/* Responsive Embedded Video Container */}
           <div style={{
             position: 'relative',
-            width: '100%',
-            paddingTop: '56.25%', // 16:9 Aspect Ratio
-            background: '#000',
-            borderRadius: 'var(--radius-lg)',
+            paddingBottom: '56.25%', // 16:9 Aspect Ratio
+            height: 0,
             overflow: 'hidden',
-            marginBottom: '1.75rem',
-            border: '1px solid var(--border-color)',
-            boxShadow: 'var(--shadow-md)'
+            borderRadius: 'var(--radius-lg)',
+            background: '#000',
+            boxShadow: 'var(--shadow-xl)',
+            marginBottom: '1.5rem',
+            border: '1px solid var(--border-color)'
           }}>
             <iframe
-              src={activeLesson.video_url || 'https://www.youtube.com/embed/eIrMbAQSU34'}
+              src={activeLesson.video_url || 'https://www.youtube.com/embed/dQw4w9WgXcQ'}
               title={activeLesson.title}
               style={{
                 position: 'absolute',
@@ -296,7 +350,7 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
             />
           </div>
 
-          {/* Lesson Title & Completion Controls */}
+          {/* Lesson Title & Completion Toggle */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -363,7 +417,7 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
                 gap: '0.4rem'
               }}
             >
-              <ListChecks size={15} /> Pre-Content & Prerequisites
+              <ListChecks size={15} /> Prerequisites
             </button>
 
             <button
@@ -382,7 +436,7 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
                 gap: '0.4rem'
               }}
             >
-              <FileText size={15} /> Lesson Syllabus & Notes
+              <FileText size={15} /> Syllabus Notes
             </button>
 
             <button
@@ -401,7 +455,7 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
                 gap: '0.4rem'
               }}
             >
-              <Edit3 size={15} /> My Study Scratchpad
+              <Edit3 size={15} /> My Scratchpad
             </button>
 
             <button
@@ -420,7 +474,64 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
                 gap: '0.4rem'
               }}
             >
-              <HelpCircle size={15} /> Knowledge Check (Quiz)
+              <HelpCircle size={15} /> Mini Quiz
+            </button>
+
+            <button
+              onClick={() => setActiveTab('resources')}
+              style={{
+                padding: '0.65rem 1.1rem',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: activeTab === 'resources' ? '2px solid var(--accent-emerald)' : '2px solid transparent',
+                color: activeTab === 'resources' ? 'var(--accent-emerald)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <FolderGit2 size={15} /> Files & Code
+            </button>
+
+            <button
+              onClick={() => setActiveTab('discussions')}
+              style={{
+                padding: '0.65rem 1.1rem',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: activeTab === 'discussions' ? '2px solid var(--accent-purple)' : '2px solid transparent',
+                color: activeTab === 'discussions' ? 'var(--accent-purple)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <MessageSquare size={15} /> Q&A Forum
+            </button>
+
+            <button
+              onClick={() => setActiveTab('ai-buddy')}
+              style={{
+                padding: '0.65rem 1.1rem',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: activeTab === 'ai-buddy' ? '2px solid #ec4899' : '2px solid transparent',
+                color: activeTab === 'ai-buddy' ? '#ec4899' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <Bot size={15} /> AI Study Buddy
             </button>
           </div>
 
@@ -603,8 +714,73 @@ export default function LearningRoom({ courseId, onBack, onOpenExam }) {
             </div>
           )}
 
+          {/* Tab 4: Resources */}
+          {activeTab === 'resources' && (
+            <CourseResources courseId={course.id} />
+          )}
+
+          {/* Tab 5: Q&A Forum */}
+          {activeTab === 'discussions' && (
+            <CourseDiscussions courseId={course.id} currentLessonId={activeLesson.id} />
+          )}
+
+          {/* Tab 6: AI Study Buddy */}
+          {activeTab === 'ai-buddy' && (
+            <div className="card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Bot size={20} color="#ec4899" />
+                <h3 style={{ fontSize: '1.1rem', color: '#fff' }}>AI Study Buddy & Doubt Explainer</h3>
+              </div>
+
+              <div style={{
+                maxHeight: '320px',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                marginBottom: '1rem',
+                paddingRight: '0.5rem'
+              }}>
+                {aiMessages.map((msg, i) => (
+                  <div key={i} style={{
+                    alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                    maxWidth: '85%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: msg.role === 'user' ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.06)',
+                    color: '#fff',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.5,
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {msg.text}
+                  </div>
+                ))}
+                {aiThinking && (
+                  <div style={{ alignSelf: 'flex-start', color: 'var(--text-muted)', fontSize: '0.85rem', fontStyle: 'italic' }}>
+                    AI is analyzing your question...
+                  </div>
+                )}
+              </div>
+
+              <form onSubmit={handleAskAi} style={{ display: 'flex', gap: '0.5rem' }}>
+                <input 
+                  type="text"
+                  className="form-input"
+                  placeholder={`Ask a question about ${activeLesson.title}...`}
+                  value={aiQuestion}
+                  onChange={(e) => setAiQuestion(e.target.value)}
+                  style={{ flex: 1 }}
+                />
+                <button type="submit" className="btn btn-primary" disabled={aiThinking}>
+                  <Send size={16} /> Ask
+                </button>
+              </form>
+            </div>
+          )}
+
           {/* Bottom Next/Previous Navigation */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
             <button
               disabled={activeLessonIndex === 0}
               onClick={() => setActiveLessonIndex(activeLessonIndex - 1)}

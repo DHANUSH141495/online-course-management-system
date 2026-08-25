@@ -427,3 +427,169 @@ exports.deleteCourse = (req, res) => {
     });
   }
 };
+
+// ==========================================
+// Interactive Discussions & Forum Endpoints
+// ==========================================
+
+// GET /api/courses/:id/discussions
+exports.getDiscussions = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { lesson_id } = req.query;
+
+    let query = `
+      SELECT 
+        d.*,
+        u.name AS user_name,
+        u.role AS user_role,
+        u.avatar AS user_avatar
+      FROM discussions d
+      JOIN users u ON d.user_id = u.id
+      WHERE d.course_id = ?
+    `;
+    const params = [id];
+
+    if (lesson_id) {
+      query += ` AND (d.lesson_id = ? OR d.lesson_id IS NULL)`;
+      params.push(lesson_id);
+    }
+
+    query += ` ORDER BY d.created_at DESC`;
+
+    const discussions = db.prepare(query).all(...params);
+
+    return res.json({
+      success: true,
+      count: discussions.length,
+      discussions
+    });
+  } catch (error) {
+    console.error('GetDiscussions Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to load discussions.'
+    });
+  }
+};
+
+// POST /api/courses/:id/discussions
+exports.createDiscussion = (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { lesson_id, parent_id, title, content } = req.body;
+
+    if (!content || !content.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Discussion content cannot be empty.'
+      });
+    }
+
+    const result = db.prepare(`
+      INSERT INTO discussions (course_id, lesson_id, user_id, parent_id, title, content)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(id, lesson_id || null, userId, parent_id || null, title ? title.trim() : null, content.trim());
+
+    const created = db.prepare(`
+      SELECT 
+        d.*,
+        u.name AS user_name,
+        u.role AS user_role,
+        u.avatar AS user_avatar
+      FROM discussions d
+      JOIN users u ON d.user_id = u.id
+      WHERE d.id = ?
+    `).get(result.lastInsertRowid);
+
+    return res.status(201).json({
+      success: true,
+      message: parent_id ? 'Reply posted successfully!' : 'Question posted to discussion forum!',
+      discussion: created
+    });
+  } catch (error) {
+    console.error('CreateDiscussion Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to post discussion.'
+    });
+  }
+};
+
+// POST /api/courses/discussions/:id/upvote
+exports.upvoteDiscussion = (req, res) => {
+  try {
+    const { id } = req.params;
+    db.prepare('UPDATE discussions SET upvotes = upvotes + 1 WHERE id = ?').run(id);
+    const updated = db.prepare('SELECT upvotes FROM discussions WHERE id = ?').get(id);
+
+    return res.json({
+      success: true,
+      upvotes: updated ? updated.upvotes : 0,
+      message: 'Upvoted!'
+    });
+  } catch (error) {
+    console.error('UpvoteDiscussion Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to upvote discussion.'
+    });
+  }
+};
+
+// ==========================================
+// Course Resources & Downloads Endpoints
+// ==========================================
+
+// GET /api/courses/:id/resources
+exports.getCourseResources = (req, res) => {
+  try {
+    const { id } = req.params;
+    const resources = db.prepare('SELECT * FROM course_resources WHERE course_id = ? ORDER BY id ASC').all(id);
+
+    return res.json({
+      success: true,
+      count: resources.length,
+      resources
+    });
+  } catch (error) {
+    console.error('GetCourseResources Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to load course resources.'
+    });
+  }
+};
+
+// POST /api/courses/:id/resources (Admin / Instructor)
+exports.addCourseResource = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, type = 'code', url, description, file_size } = req.body;
+
+    if (!title || !url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Resource title and download URL are required.'
+      });
+    }
+
+    const result = db.prepare(`
+      INSERT INTO course_resources (course_id, title, type, url, description, file_size)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(id, title.trim(), type, url.trim(), description || '', file_size || 'N/A');
+
+    return res.status(201).json({
+      success: true,
+      message: 'Course resource attached successfully!',
+      resourceId: result.lastInsertRowid
+    });
+  } catch (error) {
+    console.error('AddCourseResource Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to add course resource.'
+    });
+  }
+};

@@ -4,17 +4,22 @@ const enrollmentController = require('../controllers/enrollmentController');
 const examController = require('../controllers/examController');
 const { authenticate } = require('../middleware/auth');
 
-router.use(authenticate);
+// Public Certificate Verification (No auth required)
+router.get('/verify-certificate/:code', enrollmentController.verifyCertificate);
 
-router.post('/', enrollmentController.enrollInCourse);
-router.get('/my', enrollmentController.getMyEnrollments);
-router.get('/courses/:courseId/learn', enrollmentController.getCourseLearningRoom);
-router.post('/courses/:courseId/lessons/:lessonId/complete', enrollmentController.toggleLessonCompletion);
-router.get('/lessons/:lessonId/notes', enrollmentController.getLessonNotes);
-router.post('/lessons/:lessonId/notes', enrollmentController.saveLessonNotes);
+// Protected Student Routes (Require JWT Token)
+router.post('/', authenticate, enrollmentController.enrollInCourse);
+router.get('/my', authenticate, enrollmentController.getMyEnrollments);
+router.get('/my/analytics', authenticate, enrollmentController.getStudentAnalytics);
+router.post('/my/log-study-time', authenticate, enrollmentController.logStudyTime);
+
+router.get('/courses/:courseId/learn', authenticate, enrollmentController.getCourseLearningRoom);
+router.post('/courses/:courseId/lessons/:lessonId/complete', authenticate, enrollmentController.toggleLessonCompletion);
+router.get('/lessons/:lessonId/notes', authenticate, enrollmentController.getLessonNotes);
+router.post('/lessons/:lessonId/notes', authenticate, enrollmentController.saveLessonNotes);
 
 // Exam Endpoints
-router.get('/courses/:courseId/exam', examController.getCourseExam);
-router.post('/courses/:courseId/exam/submit', examController.submitCourseExam);
+router.get('/courses/:courseId/exam', authenticate, examController.getCourseExam);
+router.post('/courses/:courseId/exam/submit', authenticate, examController.submitCourseExam);
 
 module.exports = router;

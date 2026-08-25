@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import AddCourseModal from './components/AddCourseModal';
+import VerifyCertificateModal from './components/VerifyCertificateModal';
 import CatalogPage from './pages/CatalogPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import StudentDashboard from './pages/StudentDashboard';
@@ -18,6 +19,7 @@ export default function App() {
   const [activePage, setActivePage] = useState('catalog'); // 'catalog' | 'course-detail' | 'student-dashboard' | 'learning-room' | 'exam-proctor' | 'admin-dashboard' | 'api-docs'
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [isGlobalAddCourseOpen, setIsGlobalAddCourseOpen] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [categories, setCategories] = useState([]);
 
   // Fetch categories once for global modal usage
@@ -56,7 +58,11 @@ export default function App() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Navigation Header */}
-      <Navbar activePage={activePage} setActivePage={handlePageChange} />
+      <Navbar 
+        activePage={activePage} 
+        setActivePage={handlePageChange} 
+        onOpenVerifyModal={() => setIsVerifyModalOpen(true)}
+      />
 
       {/* Main Content View Switcher */}
       <main style={{ flex: 1 }}>
@@ -112,11 +118,19 @@ export default function App() {
 
       {/* Footer (hidden in dedicated full-screen learning/exam room for distraction-free focus) */}
       {activePage !== 'learning-room' && activePage !== 'exam-proctor' && (
-        <Footer onNavigate={handlePageChange} />
+        <Footer 
+          onNavigate={handlePageChange} 
+          onOpenVerifyModal={() => setIsVerifyModalOpen(true)}
+        />
       )}
 
       {/* Global Modals */}
       <AuthModal />
+
+      <VerifyCertificateModal 
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+      />
 
       {isGlobalAddCourseOpen && (
         <AddCourseModal 
