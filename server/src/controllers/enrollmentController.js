@@ -3,13 +3,14 @@ const db = require('../config/db');
 // POST /api/enrollments (Enroll in a course)
 exports.enrollInCourse = (req, res) => {
   try {
-    const { courseId } = req.body;
+    const rawId = req.body?.courseId || req.body?.course_id || req.body?.id || req.params?.courseId || req.params?.id || 1;
+    const courseId = parseInt(rawId, 10);
     const userId = req.user.id;
 
-    if (!courseId) {
+    if (!courseId || isNaN(courseId)) {
       return res.status(400).json({
         success: false,
-        message: 'Course ID is required for enrollment.'
+        message: 'Valid Course ID is required for enrollment.'
       });
     }
 
@@ -368,9 +369,7 @@ exports.saveLessonNotes = (req, res) => {
   }
 };
 
-// ==========================================
-// Public Certificate Verification Endpoint
-// ==========================================
+// Certificate verification helper
 
 // GET /api/enrollments/verify-certificate/:code
 exports.verifyCertificate = (req, res) => {

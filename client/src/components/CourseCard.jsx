@@ -35,21 +35,18 @@ export default function CourseCard({ course, onSelectCourse, onToggleBookmark })
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(180deg, transparent 40%, rgba(10, 13, 23, 0.9) 100%)'
+          background: 'linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.85) 100%)'
         }} />
 
         {/* Category Badge & Bookmark Button */}
         <div style={{ position: 'absolute', top: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '0.4rem' }}>
             {course.category_name && (
-              <span className="badge badge-indigo">
+              <span className="badge">
                 {course.category_name}
               </span>
             )}
-            <span className={`badge ${
-              course.level === 'Beginner' ? 'badge-emerald' : 
-              course.level === 'Intermediate' ? 'badge-amber' : 'badge-purple'
-            }`}>
+            <span className="badge">
               {course.level}
             </span>
           </div>
@@ -61,7 +58,7 @@ export default function CourseCard({ course, onSelectCourse, onToggleBookmark })
               if (onToggleBookmark) onToggleBookmark(course.id);
             }}
             style={{
-              background: 'rgba(10, 13, 23, 0.75)',
+              background: 'rgba(0, 0, 0, 0.75)',
               backdropFilter: 'blur(8px)',
               border: '1px solid var(--border-color)',
               borderRadius: '50%',
@@ -88,7 +85,7 @@ export default function CourseCard({ course, onSelectCourse, onToggleBookmark })
             left: '1rem',
             right: '1rem'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: '#6ee7b7', marginBottom: '0.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
               <span>{progress === 100 ? '🎉 Completed' : 'In Progress'}</span>
               <span>{progress}%</span>
             </div>
@@ -101,7 +98,7 @@ export default function CourseCard({ course, onSelectCourse, onToggleBookmark })
 
       {/* Course Details Content */}
       <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.4rem', color: '#fff', lineHeight: 1.35 }}>
+        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.4rem', color: 'var(--text-primary)', lineHeight: 1.35 }}>
           {course.title}
         </h3>
 

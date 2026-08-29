@@ -1,8 +1,6 @@
--- ==========================================================
--- Online Course Management System (E-Learning Platform)
--- Relational Database DDL Schema (MySQL / PostgreSQL / SQLite)
+-- Online Course Management System
+-- Relational Database DDL Schema (SQLite / Postgres compatible)
 -- Author: Dhanush
--- ==========================================================
 
 -- 1. Users Table (Role-Based: student, admin)
 CREATE TABLE IF NOT EXISTS users (
@@ -205,6 +203,20 @@ CREATE TABLE IF NOT EXISTS learning_logs (
     FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE SET NULL
 );
 
+-- 16. User Login & Access Audit Logs Table
+CREATE TABLE IF NOT EXISTS login_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    email VARCHAR(150) NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'student',
+    ip_address VARCHAR(100),
+    user_agent TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'success' CHECK(status IN ('success', 'failed')),
+    login_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
 -- Query Optimization Indexes
 CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(category_id);
 CREATE INDEX IF NOT EXISTS idx_lessons_course ON lessons(course_id);
@@ -218,3 +230,5 @@ CREATE INDEX IF NOT EXISTS idx_discussions_course ON discussions(course_id);
 CREATE INDEX IF NOT EXISTS idx_course_resources_course ON course_resources(course_id);
 CREATE INDEX IF NOT EXISTS idx_user_achievements_user ON user_achievements(user_id);
 CREATE INDEX IF NOT EXISTS idx_learning_logs_user_date ON learning_logs(user_id, activity_date);
+CREATE INDEX IF NOT EXISTS idx_login_logs_user ON login_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_login_logs_time ON login_logs(login_at);

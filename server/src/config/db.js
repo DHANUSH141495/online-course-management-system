@@ -220,6 +220,22 @@ function initDatabase() {
     );
   `);
 
+  // User Login & Access Audit Logs Table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS login_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      email TEXT NOT NULL,
+      user_name TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'student',
+      ip_address TEXT,
+      user_agent TEXT,
+      status TEXT NOT NULL DEFAULT 'success',
+      login_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    );
+  `);
+
   // Create Indexes
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(category_id);
@@ -233,6 +249,8 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_discussions_course ON discussions(course_id);
     CREATE INDEX IF NOT EXISTS idx_course_resources_course ON course_resources(course_id);
     CREATE INDEX IF NOT EXISTS idx_user_achievements_user ON user_achievements(user_id);
+    CREATE INDEX IF NOT EXISTS idx_login_logs_user ON login_logs(user_id);
+    CREATE INDEX IF NOT EXISTS idx_login_logs_time ON login_logs(login_at);
   `);
 
   seedData();
@@ -767,6 +785,23 @@ function seedAchievementsAndLogs() {
     insertLog.run(1, 90, '-2 days');
     insertLog.run(1, 45, '-1 days');
     insertLog.run(1, 60, '0 days');
+  }
+
+  // Seed sample initial login audit logs if empty
+  const logCount = db.prepare('SELECT COUNT(*) AS count FROM login_logs').get().count;
+  if (logCount === 0) {
+    console.log('🔐 Seeding initial User Login & Access Audit Logs...');
+    const insertLoginLog = db.prepare(`
+      INSERT INTO login_logs (user_id, email, user_name, role, ip_address, user_agent, status, login_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, DATETIME('now', ?))
+    `);
+
+    insertLoginLog.run(1, 'dhanush@gmail.com', 'Dhanush', 'student', '192.168.1.105', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0.0.0 Safari/537.36', 'success', '-2 days');
+    insertLoginLog.run(3, 'admin@coursify.com', 'Admin Master', 'admin', '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0.0.0 Safari/537.36', 'success', '-1 days');
+    insertLoginLog.run(2, 'john.doe@gmail.com', 'John Doe', 'student', '10.0.0.42', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36', 'success', '-18 hours');
+    insertLoginLog.run(null, 'attacker@unknown.com', 'Unknown', 'student', '45.33.32.156', 'Python-urllib/3.8', 'failed', '-12 hours');
+    insertLoginLog.run(1, 'dhanush@gmail.com', 'Dhanush', 'student', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Edge/128.0.0.0', 'success', '-2 hours');
+    insertLoginLog.run(3, 'admin@coursify.com', 'Admin Master', 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Edge/128.0.0.0', 'success', '-15 minutes');
   }
 }
 

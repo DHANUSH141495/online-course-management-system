@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaLuxe | Modern Lifestyle & Technology Store</title>
+    <meta name="description" content="Discover premium electronics, minimalist fashion, audio gear, smart wearables and designer home essentials with express shipping and secure checkout.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Announcement Top Banner -->
+    <div class="announcement-bar">
+        <div class="announcement-content">
+            <span>✨ FLASH SALE: Use code <strong>NOVA25</strong> for 25% OFF all Tech & Audio gear!</span>
+            <span class="announcement-sep">•</span>
+            <span>🚀 Free Express Shipping on orders over <span class="free-ship-threshold-text">$75.00</span></span>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <!-- Brand Logo -->
+            <a href="#" class="brand-logo">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">
+                    <span>Nova</span>Luxe
+                </div>
+            </a>
+
+            <!-- Search Bar with Live Filter & Clear Button -->
+            <div class="nav-search-wrapper">
+                <div class="search-input-group">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="global-search-input" placeholder="Search 24+ premium products (e.g. Headphones, Watch, Hoodie)..." autocomplete="off">
+                    <button type="button" id="btn-clear-search" class="btn-clear-search" title="Clear">✖</button>
+                </div>
+                <button type="button" id="btn-search-trigger" class="btn-search-action">Search</button>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="nav-actions">
+                <!-- Currency Switcher -->
+                <button type="button" id="currency-toggle-btn" class="nav-icon-btn currency-btn" title="Toggle Currency (USD / INR)">
+                    <span id="currency-label">$ USD</span>
+                </button>
+
+                <!-- Dark/Light Mode Switcher -->
+                <button type="button" id="theme-toggle-btn" class="nav-icon-btn" title="Toggle Dark / Light Mode" aria-label="Toggle Theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+
+                <!-- Wishlist Button -->
+                <button type="button" id="wishlist-toggle-btn" class="nav-icon-btn" title="View Wishlist" aria-label="Wishlist">
+                    <span>❤️</span>
+                    <span class="badge-count" id="wishlist-badge">0</span>
+                </button>
+
+                <!-- My Orders Tracker Button -->
+                <button type="button" id="orders-toggle-btn" class="nav-icon-btn" title="My Orders & Tracking" aria-label="My Orders">
+                    <span>📦</span>
+                    <span class="badge-count" id="orders-badge">0</span>
+                </button>
+
+                <!-- Cart Button -->
+                <button type="button" id="cart-toggle-btn" class="nav-cart-btn" aria-label="Shopping Cart">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-label">Cart</span>
+                    <span class="badge-count cart-badge" id="cart-badge">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Hero Showcase Banner -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="pulse-dot"></span>
+                        New Season Drop • 2026 Collection
+                    </div>
+                    <h1 class="hero-title">
+                        Next-Gen Gear for <span class="gradient-text">Modern Living</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Elevate your everyday lifestyle with precision-engineered wireless audio, minimalist apparel, smart ambient accessories, and ultra-sleek everyday carry essentials.
+                    </p>
+                    
+                    <div class="hero-cta-group">
+                        <a href="#catalog" class="btn btn-primary btn-lg">
+                            🛍️ Explore All Products
+                        </a>
+                        <button type="button" id="btn-hero-deal" class="btn btn-glass btn-lg">
+                            🔥 View Today's Deal (-30%)
+                        </button>
+                    </div>
+
+                    <!-- Flash Sale Countdown Timer -->
+                    <div class="flash-sale-box">
+                        <div class="flash-sale-title">
+                            ⚡ Flash Deals Ending In:
+                        </div>
+                        <div class="countdown-timer" id="countdown-timer">
+                            <div class="time-block"><span id="cd-hours">08</span><small>Hours</small></div>
+                            <span class="colon">:</span>
+                            <div class="time-block"><span id="cd-mins">45</span><small>Mins</small></div>
+                            <span class="colon">:</span>
+                            <div class="time-block"><span id="cd-secs">30</span><small>Secs</small></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-media">
+                    <div class="hero-card-showcase">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80" alt="NovaPro ANC Wireless Headphones" class="hero-product-img">
+                        <div class="floating-badge badge-top-right">
+                            <span class="badge-icon">⭐</span>
+                            <span class="badge-text"><strong>4.9 / 5.0</strong> (1,240+ reviews)</span>
+                        </div>
+                        <div class="floating-badge badge-bottom-left">
+                            <span class="badge-icon">🏷️</span>
+                            <span class="badge-text"><strong>NovaPro ANC Studio</strong> • Save $50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust Badges Bar -->
+        <section class="trust-bar">
+            <div class="trust-container">
+                <div class="trust-item">
+                    <div class="trust-icon">🚀</div>
+                    <div class="trust-text">
+                        <h4>Free Express Delivery</h4>
+                        <p>On all qualifying orders over $75</p>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">🛡️</div>
+                    <div class="trust-text">
+                        <h4>100% Secure Checkout</h4>
+                        <p>256-Bit SSL Encrypted Payment</p>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">🔄</div>
+                    <div class="trust-text">
+                        <h4>30-Day Easy Returns</h4>
+                        <p>Hassle-free money back guarantee</p>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">💬</div>
+                    <div class="trust-text">
+                        <h4>24/7 Dedicated Support</h4>
+                        <p>Instant expert live chat help</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Showcase Carousel -->
+        <section class="category-section">
+            <div class="section-container">
+                <div class="section-header">
+                    <div>
+                        <span class="section-tag">Curated Collections</span>
+                        <h2 class="section-title">Shop by Category</h2>
+                    </div>
+                    <p class="section-subtitle">Find exactly what you are looking for across our dedicated departments.</p>
+                </div>
+
+                <div class="category-cards-grid">
+                    <div class="category-card" data-cat="tech">
+                        <div class="cat-icon-bg">🎧</div>
+                        <h3>Tech & Audio</h3>
+                        <p>ANC Headphones, Speakers & Studio Gear</p>
+                        <span class="cat-link">Browse Tech →</span>
+                    </div>
+                    <div class="category-card" data-cat="wearables">
+                        <div class="cat-icon-bg">⌚</div>
+                        <h3>Smart Wearables</h3>
+                        <p>AMOLED Fitness Trackers & Smartwatches</p>
+                        <span class="cat-link">Browse Wearables →</span>
+                    </div>
+                    <div class="category-card" data-cat="apparel">
+                        <div class="cat-icon-bg">🧥</div>
+                        <h3>Minimalist Apparel</h3>
+                        <p>Premium Hoodies, Tees & Streetwear</p>
+                        <span class="cat-link">Browse Apparel →</span>
+                    </div>
+                    <div class="category-card" data-cat="home">
+                        <div class="cat-icon-bg">💡</div>
+                        <h3>Home & Living</h3>
+                        <p>Smart RGB Lamps, Diffusers & Ergonomics</p>
+                        <span class="cat-link">Browse Home →</span>
+                    </div>
+                    <div class="category-card" data-cat="gaming">
+                        <div class="cat-icon-bg">🎮</div>
+                        <h3>Gaming & Setup</h3>
+                        <p>Mechanical Keyboards, Mice & Desk Mats</p>
+                        <span class="cat-link">Browse Gaming →</span>
+                    </div>
+                    <div class="category-card" data-cat="accessories">
+                        <div class="cat-icon-bg">🎒</div>
+                        <h3>EDC Accessories</h3>
+                        <p>Anti-Theft Backpacks, Wallets & Chargers</p>
+                        <span class="cat-link">Browse Accessories →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Product Catalog Section -->
+        <section class="catalog-section" id="catalog">
+            <div class="section-container">
+                
+                <div class="section-header catalog-header">
+                    <div>
+                        <span class="section-tag">Explore The Catalog</span>
+                        <h2 class="section-title">Featured Products</h2>
+                    </div>
+                    <div class="catalog-stats-badge" id="results-count-badge">
+                        Showing 24 of 24 Products
+                    </div>
+                </div>
+
+                <!-- Catalog Filter & Control Bar -->
+                <div class="catalog-controls-card">
+                    <!-- Category Pills -->
+                    <div class="filter-pills-row">
+                        <button type="button" class="filter-pill active" data-filter="all">All Items (24)</button>
+                        <button type="button" class="filter-pill" data-filter="tech">🎧 Tech & Audio</button>
+                        <button type="button" class="filter-pill" data-filter="wearables">⌚ Wearables</button>
+                        <button type="button" class="filter-pill" data-filter="apparel">🧥 Apparel</button>
+                        <button type="button" class="filter-pill" data-filter="home">💡 Home & Living</button>
+                        <button type="button" class="filter-pill" data-filter="gaming">🎮 Gaming</button>
+                        <button type="button" class="filter-pill" data-filter="accessories">🎒 Accessories</button>
+                    </div>
+
+                    <!-- Secondary Filter Controls (Price Slider & Sort) -->
+                    <div class="controls-toolbar">
+                        <!-- Price Range Slider -->
+                        <div class="price-slider-group">
+                            <label for="price-range">Max Price: <strong id="price-slider-val">$500</strong></label>
+                            <input type="range" id="price-range" min="15" max="500" value="500" step="5">
+                        </div>
+
+                        <!-- Sort By Dropdown -->
+                        <div class="sort-group">
+                            <label for="sort-select">Sort By:</label>
+                            <select id="sort-select" class="custom-select">
+                                <option value="featured">✨ Featured</option>
+                                <option value="price-asc">💵 Price: Low to High</option>
+                                <option value="price-desc">💎 Price: High to Low</option>
+                                <option value="rating-desc">⭐ Highest Customer Rating</option>
+                                <option value="name-asc">🔤 Name (A - Z)</option>
+                            </select>
+                        </div>
+
+                        <!-- Reset Filters Button -->
+                        <button type="button" id="btn-reset-filters" class="btn-reset-filters" title="Reset All Filters">
+                            🔄 Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Grid Container -->
+                <div class="products-grid" id="products-grid">
+                    <!-- Dynamic rendering by app.js -->
+                </div>
+
+                <!-- Empty State (Hidden by default) -->
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No products found</h3>
+                    <p>Try adjusting your search terms, changing the category, or expanding the price range slider.</p>
+                    <button type="button" class="btn btn-primary" id="btn-clear-all-filters">Clear All Filters</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Special Promotional Banner -->
+        <section class="promo-banner-section">
+            <div class="section-container">
+                <div class="promo-banner-card">
+                    <div class="promo-banner-content">
+                        <span class="promo-pill">Exclusive Member Discount</span>
+                        <h2>Join the NovaLuxe Club & Get <strong>20% OFF</strong> Your First Order</h2>
+                        <p>Subscribe to our weekly curated drop newsletter and unlock exclusive early-access flash sales, secret promo codes, and free gift rewards.</p>
+                        
+                        <form id="newsletter-form" class="newsletter-form">
+                            <input type="email" placeholder="Enter your email address..." required id="newsletter-email">
+                            <button type="submit" class="btn btn-primary">Claim 20% Coupon</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Testimonials Section -->
+        <section class="reviews-section">
+            <div class="section-container">
+                <div class="section-header text-center">
+                    <span class="section-tag">Real Buyer Feedback</span>
+                    <h2 class="section-title">Loved by 45,000+ Customers</h2>
+                </div>
+
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"The NovaPro ANC Headphones rival $400 flagship studio headphones. The active noise cancellation and memory foam comfort are genuinely unmatched!"</p>
+                        <div class="testimonial-author">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus" alt="Marcus V.">
+                            <div>
+                                <strong>Marcus Vance</strong>
+                                <span>Verified Buyer • Tech Reviewer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"Super fast 2-day delivery! Ordered the Mechanical Keyboard and Desk Mat. The packaging was luxury grade and customer service answered my query in 3 minutes."</p>
+                        <div class="testimonial-author">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia" alt="Sophia L.">
+                            <div>
+                                <strong>Sophia Lin</strong>
+                                <span>Verified Buyer • Designer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"The Minimalist French Terry Hoodie fits perfectly and doesn't shrink after washing. Used code NOVA25 for a great discount. Highly recommend NovaLuxe!"</p>
+                        <div class="testimonial-author">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul" alt="Rahul K.">
+                            <div>
+                                <strong>Rahul Kapoor</strong>
+                                <span>Verified Buyer • Software Engineer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-col">
+                    <div class="brand-logo">
+                        <div class="logo-icon">⚡</div>
+                        <div class="logo-text"><span>Nova</span>Luxe</div>
+                    </div>
+                    <p class="footer-desc">
+                        A curated digital storefront dedicated to high-performance consumer technology, minimalist apparel, and ergonomic everyday essentials.
+                    </p>
+                    <div class="payment-methods-icons">
+                        <span class="pay-badge">💳 Visa</span>
+                        <span class="pay-badge">💳 Mastercard</span>
+                        <span class="pay-badge">📱 UPI / QR</span>
+                        <span class="pay-badge">🍎 Apple Pay</span>
+                        <span class="pay-badge">🌐 PayPal</span>
+                    </div>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Shop Categories</h4>
+                    <ul>
+                        <li><a href="#catalog" data-filter-link="tech">Tech & Audio</a></li>
+                        <li><a href="#catalog" data-filter-link="wearables">Smart Wearables</a></li>
+                        <li><a href="#catalog" data-filter-link="apparel">Minimalist Apparel</a></li>
+                        <li><a href="#catalog" data-filter-link="home">Home & Living</a></li>
+                        <li><a href="#catalog" data-filter-link="gaming">Gaming & Desks</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Customer Care</h4>
+                    <ul>
+                        <li><a href="#" id="link-my-orders">Track My Order</a></li>
+                        <li><a href="#" id="link-shipping-info">Shipping & Returns</a></li>
+                        <li><a href="#" id="link-promo-codes">Active Promo Codes</a></li>
+                        <li><a href="#" id="link-contact">24/7 Help & Support</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h4>Active Coupons</h4>
+                    <div class="coupon-hint-card">
+                        <div class="code-pill"><strong>NOVA25</strong> • 25% Off</div>
+                        <div class="code-pill"><strong>WELCOME10</strong> • 10% Off</div>
+                        <div class="code-pill"><strong>FREESHIP</strong> • Free Ship</div>
+                        <small>Enter during checkout in Cart!</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>© 2026 NovaLuxe Store Inc. Built for Pair Programming Project Demo. Author: Dhanush.</div>
+                <div>Designed with HTML5 • CSS3 • Vanilla ES6 JavaScript</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals & Drawers -->
+
+    <!-- 1. SLIDE-OUT CART DRAWER -->
+    <div class="drawer-backdrop" id="cart-drawer-backdrop">
+        <div class="cart-drawer" id="cart-drawer">
+            <div class="cart-drawer-header">
+                <div class="cart-header-title">
+                    <h3>🛒 Your Shopping Bag (<span id="cart-items-count">0</span>)</h3>
+                </div>
+                <button type="button" class="btn-close-drawer" id="btn-close-cart" aria-label="Close Cart">&times;</button>
+            </div>
+
+            <!-- Free Shipping Progress Tracker -->
+            <div class="free-shipping-tracker">
+                <div class="shipping-msg" id="shipping-progress-msg">
+                    Add <strong>$75.00</strong> more to unlock <strong>FREE Express Shipping!</strong>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="shipping-progress-bar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div class="cart-drawer-items" id="cart-drawer-items">
+                <!-- Dynamically rendered by app.js -->
+            </div>
+
+            <!-- Cart Drawer Footer & Summary -->
+            <div class="cart-drawer-footer" id="cart-drawer-footer">
+                <!-- Promo Code Box -->
+                <div class="coupon-box">
+                    <div class="coupon-input-group">
+                        <input type="text" id="coupon-input" placeholder="Promo code (e.g. NOVA25)" uppercase>
+                        <button type="button" id="btn-apply-coupon">Apply</button>
+                    </div>
+                    <div id="coupon-status-msg" class="coupon-status-msg"></div>
+                </div>
+
+                <!-- Price Summary Breakdown -->
+                <div class="price-summary-breakdown">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row discount-row" id="cart-discount-row" style="display: none;">
+                        <span>Coupon Discount (<span id="applied-coupon-name"></span>)</span>
+                        <span id="cart-discount-amount">-$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Estimated Shipping</span>
+                        <span id="cart-shipping">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Estimated Tax (8%)</span>
+                        <span id="cart-tax">$0.00</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Grand Total</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Checkout Actions -->
+                <div class="cart-actions-group">
+                    <button type="button" id="btn-checkout-proceed" class="btn btn-primary btn-checkout">
+                        Proceed to Checkout 🔒
+                    </button>
+                    <button type="button" id="btn-clear-cart" class="btn btn-secondary btn-clear-cart">
+                        Clear Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. QUICK-VIEW & PRODUCT DETAIL MODAL -->
+    <div class="modal-backdrop" id="product-modal-backdrop">
+        <div class="modal-card product-modal-card" id="product-modal">
+            <button type="button" class="btn-modal-close" id="btn-close-product-modal">&times;</button>
+            <div class="product-modal-grid">
+                <!-- Media Column -->
+                <div class="modal-media-col">
+                    <div class="modal-main-img-wrap">
+                        <img id="modal-product-img" src="" alt="">
+                        <span class="modal-badge-tag" id="modal-badge-tag">SALE</span>
+                    </div>
+                    <div class="modal-thumbnails-row" id="modal-thumbnails-row">
+                        <!-- Thumbnails injected by app.js -->
+                    </div>
+                </div>
+
+                <!-- Info Column -->
+                <div class="modal-info-col">
+                    <div class="modal-cat-tag" id="modal-cat-tag">TECH & AUDIO</div>
+                    <h2 class="modal-product-title" id="modal-product-title">Product Title</h2>
+                    
+                    <div class="modal-rating-row">
+                        <div class="stars" id="modal-rating-stars">⭐⭐⭐⭐⭐</div>
+                        <span id="modal-rating-text">4.9 (124 reviews)</span>
+                        <span class="stock-badge in-stock" id="modal-stock-badge">✓ In Stock</span>
+                    </div>
+
+                    <div class="modal-price-row">
+                        <span class="modal-price" id="modal-price">$0.00</span>
+                        <span class="modal-orig-price" id="modal-orig-price">$0.00</span>
+                        <span class="modal-save-percent" id="modal-save-percent">Save 20%</span>
+                    </div>
+
+                    <p class="modal-desc" id="modal-desc">
+                        Product detailed description goes here.
+                    </p>
+
+                    <!-- Color Swatches -->
+                    <div class="variant-group" id="modal-color-group">
+                        <label>Color: <strong id="selected-color-label">Midnight Black</strong></label>
+                        <div class="color-swatches-row" id="modal-color-swatches">
+                            <!-- Injected by app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Size / Variant Selector -->
+                    <div class="variant-group" id="modal-size-group">
+                        <label>Option / Size: <strong id="selected-size-label">Standard</strong></label>
+                        <div class="size-buttons-row" id="modal-size-buttons">
+                            <!-- Injected by app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Quantity & Add to Cart -->
+                    <div class="modal-actions-row">
+                        <div class="qty-selector-box">
+                            <button type="button" id="btn-modal-qty-dec">-</button>
+                            <input type="number" id="modal-qty-input" value="1" min="1" max="10">
+                            <button type="button" id="btn-modal-qty-inc">+</button>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-modal-add-cart" id="btn-modal-add-cart">
+                            🛒 Add to Cart
+                        </button>
+
+                        <button type="button" class="btn-modal-wishlist-toggle" id="btn-modal-wishlist-toggle" title="Save to Wishlist">
+                            ❤️
+                        </button>
+                    </div>
+
+                    <!-- Highlights List -->
+                    <div class="modal-features-box">
+                        <h4>Key Highlights:</h4>
+                        <ul id="modal-features-list">
+                            <!-- Injected by app.js -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. CHECKOUT & PAYMENT MODAL -->
+    <div class="modal-backdrop" id="checkout-modal-backdrop">
+        <div class="modal-card checkout-modal-card">
+            <button type="button" class="btn-modal-close" id="btn-close-checkout-modal">&times;</button>
+            <div class="checkout-header">
+                <h2>🔒 Secure Checkout</h2>
+                <p>Complete your order in 3 simple steps with 256-Bit SSL protection.</p>
+            </div>
+
+            <form id="checkout-form" class="checkout-form-grid">
+                <!-- Left: Form Inputs -->
+                <div class="checkout-inputs-col">
+                    <!-- Step 1: Customer Contact -->
+                    <div class="checkout-step-box">
+                        <h3>1. Contact & Customer Details</h3>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" name="customerName" id="chk-name" required placeholder="e.g. Alex Turner" value="Dhanush">
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address *</label>
+                                <input type="email" name="customerEmail" id="chk-email" required placeholder="alex@example.com" value="dhanush@example.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number *</label>
+                            <input type="tel" name="customerPhone" id="chk-phone" required placeholder="+1 (555) 000-0000" value="+91 9876543210">
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Shipping Address -->
+                    <div class="checkout-step-box">
+                        <h3>2. Delivery Address</h3>
+                        <div class="form-group">
+                            <label>Street Address *</label>
+                            <input type="text" name="street" id="chk-street" required placeholder="123 Tech Blvd, Suite 400" value="42 Silicon Avenue, Indiranagar">
+                        </div>
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label>City *</label>
+                                <input type="text" name="city" id="chk-city" required placeholder="Bengaluru" value="Bengaluru">
+                            </div>
+                            <div class="form-group">
+                                <label>State / Region *</label>
+                                <input type="text" name="state" id="chk-state" required placeholder="Karnataka" value="Karnataka">
+                            </div>
+                            <div class="form-group">
+                                <label>Postal / ZIP *</label>
+                                <input type="text" name="zip" id="chk-zip" required placeholder="560038" value="560038">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Payment Method -->
+                    <div class="checkout-step-box">
+                        <h3>3. Select Payment Method</h3>
+                        <div class="payment-radios-group">
+                            <label class="payment-option-label active">
+                                <input type="radio" name="paymentMethod" value="card" checked>
+                                <span class="pay-icon">💳</span>
+                                <span class="pay-title">Credit / Debit Card</span>
+                            </label>
+                            <label class="payment-option-label">
+                                <input type="radio" name="paymentMethod" value="upi">
+                                <span class="pay-icon">📱</span>
+                                <span class="pay-title">Instant UPI / QR Code</span>
+                            </label>
+                            <label class="payment-option-label">
+                                <input type="radio" name="paymentMethod" value="cod">
+                                <span class="pay-icon">💵</span>
+                                <span class="pay-title">Cash on Delivery (COD)</span>
+                            </label>
+                        </div>
+
+                        <!-- Card Fields Simulator -->
+                        <div id="card-fields-box" class="card-fields-box">
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" id="chk-card-num" placeholder="4242 •••• •••• 4242" maxlength="19" value="4242 8888 9999 4242">
+                            </div>
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label>Expiry (MM/YY)</label>
+                                    <input type="text" id="chk-card-exp" placeholder="12/28" maxlength="5" value="08/28">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVC / CVV</label>
+                                    <input type="password" id="chk-card-cvc" placeholder="•••" maxlength="4" value="789">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Order Summary Sidebar -->
+                <div class="checkout-summary-col">
+                    <div class="checkout-summary-sticky">
+                        <h3>Order Summary</h3>
+                        <div class="checkout-items-mini-list" id="checkout-mini-list">
+                            <!-- Injected by app.js -->
+                        </div>
+
+                        <div class="price-summary-breakdown" style="margin-top: 1rem;">
+                            <div class="summary-row">
+                                <span>Items Subtotal</span>
+                                <span id="chk-subtotal">$0.00</span>
+                            </div>
+                            <div class="summary-row" id="chk-discount-row" style="display: none;">
+                                <span>Coupon Discount</span>
+                                <span id="chk-discount">-$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <span id="chk-shipping">FREE</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Estimated Tax</span>
+                                <span id="chk-tax">$0.00</span>
+                            </div>
+                            <div class="summary-row total-row">
+                                <span>Total to Pay</span>
+                                <span id="chk-total">$0.00</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-submit-order" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1.5rem;">
+                            ✅ Pay & Confirm Order
+                        </button>
+                        <p class="secure-footer-note">🔒 Guaranteed 100% Safe 256-Bit SSL Encrypted Checkout</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. ORDER CONFIRMATION / SUCCESS MODAL -->
+    <div class="modal-backdrop" id="order-success-backdrop">
+        <div class="modal-card order-success-card">
+            <div class="success-icon-animation">🎉</div>
+            <h2 style="color: var(--emerald); font-size: 1.85rem; margin-bottom: 0.5rem;">Thank You for Your Order!</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Your order has been placed and is currently being processed in our warehouse.</p>
+            
+            <div class="order-id-badge" id="success-order-id">
+                Order ID: #NOVA-89241
+            </div>
+
+            <!-- Receipt Card -->
+            <div class="order-receipt-box" id="order-receipt-box">
+                <div class="receipt-header">
+                    <h4>Receipt & Shipment Details</h4>
+                    <span id="receipt-date">Aug 25, 2026</span>
+                </div>
+                <div class="receipt-customer-details" id="receipt-customer-details">
+                    <!-- Injected by app.js -->
+                </div>
+                <div class="receipt-items-list" id="receipt-items-list">
+                    <!-- Injected by app.js -->
+                </div>
+                <div class="receipt-totals" id="receipt-totals">
+                    <!-- Injected by app.js -->
+                </div>
+            </div>
+
+            <div class="order-success-actions">
+                <button type="button" class="btn btn-primary" id="btn-continue-shopping">
+                    🛍️ Continue Shopping
+                </button>
+                <button type="button" class="btn btn-secondary" id="btn-print-receipt">
+                    🖨️ Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. WISHLIST MODAL -->
+    <div class="modal-backdrop" id="wishlist-modal-backdrop">
+        <div class="modal-card wishlist-modal-card">
+            <button type="button" class="btn-modal-close" id="btn-close-wishlist-modal">&times;</button>
+            <div class="modal-header">
+                <h2>❤️ My Saved Wishlist</h2>
+                <p>Items you have favorited for later.</p>
+            </div>
+            <div class="wishlist-items-grid" id="wishlist-items-grid">
+                <!-- Injected by app.js -->
+            </div>
+            <div class="wishlist-modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-move-wishlist-all">
+                    🛒 Move All to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. MY ORDERS TRACKER MODAL -->
+    <div class="modal-backdrop" id="orders-modal-backdrop">
+        <div class="modal-card orders-modal-card">
+            <button type="button" class="btn-modal-close" id="btn-close-orders-modal">&times;</button>
+            <div class="modal-header">
+                <h2>📦 Order History & Live Tracking</h2>
+                <p>Track delivery milestones for your placed orders.</p>
+            </div>
+            <div class="orders-history-list" id="orders-history-list">
+                <!-- Injected by app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript Application Core -->
+    <script src="app.js"></script>
+</body>
+</html>

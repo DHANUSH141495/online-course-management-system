@@ -8,30 +8,34 @@ import {
   LogOut, 
   User, 
   ShieldAlert, 
-  Sparkles,
-  ChevronDown,
-  Menu,
-  X,
-  Palette,
-  Check,
-  ShieldCheck
+  Sparkles, 
+  ChevronDown, 
+  Menu, 
+  X, 
+  Palette, 
+  Check, 
+  ShieldCheck,
+  History,
+  KeyRound
 } from 'lucide-react';
 
-export default function Navbar({ activePage, setActivePage, onOpenVerifyModal }) {
+export default function Navbar({ activePage, setActivePage, onOpenVerifyModal, onOpenLoginHistory }) {
   const { user, logout, openAuthModal, demoLogin } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [themePickerOpen, setThemePickerOpen] = useState(false);
 
   const themes = [
-    { id: 'midnight', name: 'Midnight Cyber', color1: '#6366f1', color2: '#06b6d4', icon: '🌌' },
-    { id: 'emerald', name: 'Matrix Emerald', color1: '#10b981', color2: '#34d399', icon: '🌲' },
-    { id: 'amethyst', name: 'Cosmic Amethyst', color1: '#a855f7', color2: '#ec4899', icon: '🔮' },
-    { id: 'ocean', name: 'Oceanic Sapphire', color1: '#0284c7', color2: '#38bdf8', icon: '🌊' },
-    { id: 'sunset', name: 'Sunset Ember', color1: '#f43f5e', color2: '#fb923c', icon: '🌅' }
+    { id: 'monochrome', name: 'Monochrome Dark (Eye Comfort)', color1: '#ffffff', color2: '#18181b', icon: '👁️' },
+    { id: 'paper-white', name: 'Paper White (High Contrast)', color1: '#09090b', color2: '#f4f4f5', icon: '📄' },
+    { id: 'oled-black', name: 'OLED Pure Black (Zero Glare)', color1: '#ffffff', color2: '#000000', icon: '🖤' },
+    { id: 'eye-warm-sepia', name: 'Warm Sepia (Reading Care)', color1: '#e8cca8', color2: '#1c1916', icon: '☕' },
+    { id: 'slate', name: 'Slate Minimalist (Graphite)', color1: '#f8fafc', color2: '#1e293b', icon: '🌫️' }
   ];
 
-  const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('coursify_theme') || 'midnight');
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    return localStorage.getItem('coursify_theme') || 'monochrome';
+  });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', currentTheme);
@@ -54,7 +58,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
       position: 'sticky',
       top: 0,
       zIndex: 100,
-      background: 'rgba(10, 13, 23, 0.85)',
+      background: 'var(--bg-card)',
       backdropFilter: 'blur(16px)',
       borderBottom: '1px solid var(--border-color)'
     }}>
@@ -76,46 +80,48 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
           }}
         >
           <div style={{
-            width: '42px',
-            height: '42px',
+            width: '40px',
+            height: '40px',
             borderRadius: 'var(--radius-md)',
-            background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%)',
+            background: 'var(--text-primary)',
+            color: 'var(--bg-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 12px var(--accent-glow)'
+            boxShadow: '0 2px 10px var(--accent-glow)'
           }}>
-            <GraduationCap size={24} color="#ffffff" />
+            <GraduationCap size={22} color="currentColor" />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.03em', color: '#fff' }}>
-                Cours<span style={{ color: 'var(--accent-cyan)' }}>ify</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <span style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
+                Cours<span style={{ color: 'var(--text-muted)' }}>ify</span>
               </span>
               <span style={{
-                fontSize: '0.65rem',
+                fontSize: '0.625rem',
                 fontWeight: 700,
                 padding: '0.15rem 0.4rem',
-                background: 'rgba(99, 102, 241, 0.2)',
-                color: '#a5b4fc',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'var(--text-primary)',
                 borderRadius: '4px',
-                border: '1px solid rgba(99, 102, 241, 0.3)'
-              }}>PRO</span>
+                border: '1px solid var(--border-color)',
+                letterSpacing: '0.05em'
+              }}>B&W EDITION</span>
             </div>
             <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1 }}>
-              Course Management System
+              Online Course Management System
             </p>
           </div>
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav style={{ display: 'none', md: 'flex', alignItems: 'center', gap: '0.5rem' }} className="desktop-nav">
+        <nav style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }} className="desktop-nav">
           <button
             onClick={() => handleNavClick('catalog')}
             className={`btn ${activePage === 'catalog' ? 'btn-secondary' : 'btn-outline'}`}
             style={{ 
-              border: activePage === 'catalog' ? '1px solid var(--accent-primary)' : '1px solid transparent',
-              background: activePage === 'catalog' ? 'rgba(99, 102, 241, 0.12)' : 'transparent'
+              border: activePage === 'catalog' ? '1px solid var(--border-highlight)' : '1px solid transparent',
+              background: activePage === 'catalog' ? 'rgba(255, 255, 255, 0.08)' : 'transparent'
             }}
           >
             <BookOpen size={16} />
@@ -127,8 +133,8 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
               onClick={() => handleNavClick('student-dashboard')}
               className={`btn ${activePage === 'student-dashboard' ? 'btn-secondary' : 'btn-outline'}`}
               style={{ 
-                border: activePage === 'student-dashboard' ? '1px solid var(--accent-emerald)' : '1px solid transparent',
-                background: activePage === 'student-dashboard' ? 'rgba(16, 185, 129, 0.12)' : 'transparent'
+                border: activePage === 'student-dashboard' ? '1px solid var(--border-highlight)' : '1px solid transparent',
+                background: activePage === 'student-dashboard' ? 'rgba(255, 255, 255, 0.08)' : 'transparent'
               }}
             >
               <LayoutDashboard size={16} />
@@ -140,9 +146,8 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
             onClick={onOpenVerifyModal}
             className="btn btn-outline"
             style={{ 
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              color: 'var(--accent-emerald)',
-              background: 'rgba(16, 185, 129, 0.06)'
+              border: '1px solid var(--border-color)',
+              background: 'transparent'
             }}
           >
             <ShieldCheck size={16} />
@@ -154,9 +159,9 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
               onClick={() => handleNavClick('admin-dashboard')}
               className={`btn ${activePage === 'admin-dashboard' ? 'btn-secondary' : 'btn-outline'}`}
               style={{ 
-                border: activePage === 'admin-dashboard' ? '1px solid var(--accent-rose)' : '1px solid transparent',
-                background: activePage === 'admin-dashboard' ? 'rgba(244, 63, 94, 0.12)' : 'transparent',
-                color: '#fda4af'
+                border: activePage === 'admin-dashboard' ? '1px solid var(--border-highlight)' : '1px solid transparent',
+                background: activePage === 'admin-dashboard' ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
+                fontWeight: 700
               }}
             >
               <ShieldAlert size={16} />
@@ -169,8 +174,8 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
               onClick={() => handleNavClick('api-docs')}
               className={`btn ${activePage === 'api-docs' ? 'btn-secondary' : 'btn-outline'}`}
               style={{ 
-                border: activePage === 'api-docs' ? '1px solid var(--accent-cyan)' : '1px solid transparent',
-                background: activePage === 'api-docs' ? 'rgba(6, 182, 212, 0.12)' : 'transparent',
+                border: activePage === 'api-docs' ? '1px solid var(--border-highlight)' : '1px solid transparent',
+                background: activePage === 'api-docs' ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.85rem'
               }}
@@ -190,16 +195,16 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
               className="btn btn-outline btn-sm"
               style={{
                 borderRadius: 'var(--radius-full)',
-                padding: '0.35rem 0.65rem',
+                padding: '0.35rem 0.75rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.35rem',
+                gap: '0.4rem',
                 fontSize: '0.8rem'
               }}
-              title="Change Theme Palette"
+              title="Eye Comfort & Black/White Theme"
             >
-              <Palette size={14} color="var(--accent-cyan)" />
-              <span className="desktop-nav-inline">Theme</span>
+              <Palette size={14} />
+              <span className="desktop-nav-inline">Eye Comfort</span>
             </button>
 
             {themePickerOpen && (
@@ -207,7 +212,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                 position: 'absolute',
                 right: 0,
                 top: 'calc(100% + 8px)',
-                width: '210px',
+                width: '260px',
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border-color)',
                 borderRadius: 'var(--radius-md)',
@@ -217,8 +222,8 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                 animation: 'fadeIn 0.15s ease'
               }}>
                 <div style={{ padding: '0.4rem 0.6rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                    Select Theme Palette
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    👁️ Human Eye Comfort Themes
                   </span>
                 </div>
 
@@ -230,18 +235,18 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                       onClick={() => handleSelectTheme(t.id)}
                       style={{
                         width: '100%',
-                        padding: '0.5rem 0.6rem',
+                        padding: '0.55rem 0.65rem',
                         borderRadius: 'var(--radius-sm)',
-                        background: isSelected ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
-                        border: 'none',
-                        color: isSelected ? '#fff' : 'var(--text-secondary)',
+                        background: isSelected ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
+                        border: isSelected ? '1px solid var(--border-highlight)' : '1px solid transparent',
+                        color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
                         fontSize: '0.825rem',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         cursor: 'pointer',
-                        transition: 'background 0.15s ease',
-                        marginBottom: '2px'
+                        transition: 'all 0.15s ease',
+                        marginBottom: '3px'
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -251,18 +256,20 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                             width: '10px',
                             height: '10px',
                             borderRadius: '50%',
-                            background: t.color1
+                            background: t.color1,
+                            border: '1px solid rgba(255,255,255,0.3)'
                           }} />
                           <span style={{
                             width: '10px',
                             height: '10px',
                             borderRadius: '50%',
-                            background: t.color2
+                            background: t.color2,
+                            border: '1px solid rgba(255,255,255,0.3)'
                           }} />
-                          <span style={{ fontWeight: isSelected ? 600 : 400 }}>{t.name}</span>
+                          <span style={{ fontWeight: isSelected ? 700 : 400 }}>{t.name}</span>
                         </div>
                       </div>
-                      {isSelected && <Check size={14} color="var(--accent-emerald)" />}
+                      {isSelected && <Check size={14} />}
                     </button>
                   );
                 })}
@@ -270,7 +277,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
             )}
           </div>
 
-          {/* Quick 1-Click Demo Login helpers for Viva/Grading */}
+          {/* Quick 1-Click Demo Login helpers */}
           {!user && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <button 
@@ -279,7 +286,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                 title="Login with 1-click as student Dhanush"
                 style={{ fontSize: '0.78rem', padding: '0.35rem 0.65rem' }}
               >
-                <Sparkles size={13} color="var(--accent-emerald)" />
+                <Sparkles size={13} />
                 Demo Student
               </button>
               <button 
@@ -288,7 +295,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                 title="Login with 1-click as Admin"
                 style={{ fontSize: '0.78rem', padding: '0.35rem 0.65rem' }}
               >
-                <ShieldAlert size={13} color="var(--accent-rose)" />
+                <ShieldAlert size={13} />
                 Demo Admin
               </button>
             </div>
@@ -326,7 +333,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                   position: 'absolute',
                   right: 0,
                   top: 'calc(100% + 8px)',
-                  width: '220px',
+                  width: '230px',
                   background: 'var(--bg-secondary)',
                   border: '1px solid var(--border-color)',
                   borderRadius: 'var(--radius-md)',
@@ -345,18 +352,33 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
                     className="btn btn-outline btn-sm"
                     style={{ width: '100%', justifyContent: 'flex-start', border: 'none', marginBottom: '0.2rem' }}
                   >
-                    <LayoutDashboard size={15} /> My Learning
+                    <LayoutDashboard size={15} /> My Learning & Profile
                   </button>
 
                   {user.role === 'admin' && (
                     <button 
                       onClick={() => handleNavClick('admin-dashboard')}
                       className="btn btn-outline btn-sm"
-                      style={{ width: '100%', justifyContent: 'flex-start', border: 'none', marginBottom: '0.2rem', color: '#fda4af' }}
+                      style={{ width: '100%', justifyContent: 'flex-start', border: 'none', marginBottom: '0.2rem', fontWeight: 700 }}
                     >
-                      <ShieldAlert size={15} /> Admin Portal
+                      <ShieldAlert size={15} /> Admin Portal & Logs
                     </button>
                   )}
+
+                  <button 
+                    onClick={() => {
+                      if (user.role === 'admin') {
+                        handleNavClick('admin-dashboard');
+                      } else {
+                        handleNavClick('student-dashboard');
+                      }
+                      if (onOpenLoginHistory) onOpenLoginHistory();
+                    }}
+                    className="btn btn-outline btn-sm"
+                    style={{ width: '100%', justifyContent: 'flex-start', border: 'none', marginBottom: '0.2rem' }}
+                  >
+                    <History size={15} /> Login & Security Logs
+                  </button>
 
                   <button 
                     onClick={() => { logout(); setDropdownOpen(false); }}
@@ -425,7 +447,7 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
           <button 
             onClick={() => { setMobileMenuOpen(false); onOpenVerifyModal(); }}
             className="btn btn-outline"
-            style={{ justifyContent: 'flex-start', color: 'var(--accent-emerald)' }}
+            style={{ justifyContent: 'flex-start' }}
           >
             <ShieldCheck size={16} /> Verify Certificate
           </button>
@@ -433,9 +455,9 @@ export default function Navbar({ activePage, setActivePage, onOpenVerifyModal })
             <button 
               onClick={() => handleNavClick('admin-dashboard')}
               className={`btn ${activePage === 'admin-dashboard' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ justifyContent: 'flex-start', color: '#fda4af' }}
+              style={{ justifyContent: 'flex-start', fontWeight: 700 }}
             >
-              <ShieldAlert size={16} /> Admin Portal
+              <ShieldAlert size={16} /> Admin Portal & Logs
             </button>
           )}
           {(!user || user.role === 'admin') && (

@@ -75,8 +75,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n======================================================`);
-  console.log(`🚀 Coursify Server running on http://0.0.0.0:${PORT}`);
-  console.log(`📚 API Health check: http://localhost:${PORT}/api/health`);
-  console.log(`======================================================\n`);
+  console.log(`Coursify Server listening on http://localhost:${PORT}`);
+  console.log(`API Health Check: http://localhost:${PORT}/api/health`);
 });

@@ -15,7 +15,10 @@ import {
   Info,
   FolderGit2,
   MessageSquare,
-  Award
+  Award,
+  KeyRound,
+  History,
+  ShieldAlert
 } from 'lucide-react';
 
 export default function ApiDocsPage() {
@@ -59,6 +62,13 @@ export default function ApiDocsPage() {
       auth: true
     },
     {
+      group: 'Authentication & Session',
+      method: 'GET',
+      path: '/api/auth/login-history',
+      desc: 'Fetch current authenticated user personal sign-in & security history stored in DB.',
+      auth: true
+    },
+    {
       group: 'Course Catalog & Syllabus',
       method: 'GET',
       path: '/api/courses?search=Java&category=all&level=all',
@@ -84,7 +94,10 @@ export default function ApiDocsPage() {
       method: 'POST',
       path: '/api/courses/1/bookmark',
       desc: 'Toggle bookmark/wishlist status for a course.',
-      auth: true
+      auth: true,
+      body: {
+        courseId: 1
+      }
     },
     {
       group: 'Course Catalog & Syllabus',
@@ -123,7 +136,8 @@ export default function ApiDocsPage() {
       method: 'POST',
       path: '/api/courses/discussions/1/upvote',
       desc: 'Upvote a helpful question or answer in the forum.',
-      auth: true
+      auth: true,
+      body: {}
     },
     {
       group: 'Enrollment & Progress Tracking',
@@ -154,7 +168,8 @@ export default function ApiDocsPage() {
       method: 'POST',
       path: '/api/enrollments/courses/1/lessons/1/complete',
       desc: 'Toggle lesson completion and trigger automatic % recalculation.',
-      auth: true
+      auth: true,
+      body: {}
     },
     {
       group: 'Enrollment & Progress Tracking',
@@ -183,7 +198,7 @@ export default function ApiDocsPage() {
     {
       group: 'Certification & Analytics',
       method: 'GET',
-      path: '/api/enrollments/verify-certificate/CERT-DHANUSH-11-8178',
+      path: '/api/enrollments/verify-certificate/CERT-DHANUSH-11-7895',
       desc: 'Public verification of student credentials and issuing authenticity.',
       auth: false
     },
@@ -193,6 +208,14 @@ export default function ApiDocsPage() {
       path: '/api/enrollments/my/analytics',
       desc: 'Retrieve student learning streaks, study hours, notes count, and skill badges.',
       auth: true
+    },
+    {
+      group: 'Admin Analytics & Management',
+      method: 'GET',
+      path: '/api/admin/login-logs',
+      desc: 'Fetch full platform login & access audit records with metrics and filtering.',
+      auth: true,
+      role: 'admin'
     },
     {
       group: 'Admin Analytics & Management',
@@ -247,21 +270,31 @@ export default function ApiDocsPage() {
     setApiResponse(null);
 
     try {
+      // Auto-attach auth token if endpoint requires auth and user is unauthenticated
+      if (current.auth && !token) {
+        await demoLogin(current.role === 'admin' ? 'admin' : 'student');
+      }
+
       const options = {
         method: current.method
       };
 
-      if (editableBody && (current.method === 'POST' || current.method === 'PUT')) {
-        try {
-          options.body = editableBody;
-        } catch (e) {
-          setApiResponse({
-            status: 400,
-            ok: false,
-            data: { message: 'Invalid JSON body syntax in editor.' }
-          });
-          setRequestLoading(false);
-          return;
+      if (current.method === 'POST' || current.method === 'PUT') {
+        if (editableBody && editableBody.trim()) {
+          try {
+            JSON.parse(editableBody); // test syntax
+            options.body = editableBody;
+          } catch (e) {
+            setApiResponse({
+              status: 400,
+              ok: false,
+              data: { message: 'Invalid JSON body syntax in editor.' }
+            });
+            setRequestLoading(false);
+            return;
+          }
+        } else {
+          options.body = JSON.stringify({});
         }
       }
 
@@ -285,32 +318,53 @@ export default function ApiDocsPage() {
       {/* Header */}
       <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-          <Code size={24} color="var(--accent-cyan)" />
+          <Code size={24} />
           <h1 style={{ fontSize: '2rem' }}>REST API Documentation & Explorer</h1>
         </div>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
           Test all {endpoints.length} endpoints in real-time with editable JSON payloads and inspect relational backend responses.
         </p>
 
-        {!user && (
-          <div style={{
-            marginTop: '1rem',
-            padding: '0.75rem 1rem',
-            borderRadius: 'var(--radius-md)',
-            background: 'rgba(99, 102, 241, 0.1)',
-            border: '1px solid rgba(99, 102, 241, 0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            fontSize: '0.85rem',
-            color: '#c7d2fe'
-          }}>
-            <Info size={16} color="var(--accent-primary)" />
+        <div style={{
+          marginTop: '1.25rem',
+          padding: '0.85rem 1.1rem',
+          borderRadius: 'var(--radius-md)',
+          background: 'rgba(255, 255, 255, 0.04)',
+          border: '1px solid var(--border-color)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.75rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <KeyRound size={16} />
             <span>
-              Tip: Click <strong>"⚡ Demo Student"</strong> or <strong>"⚡ Demo Admin"</strong> in the top navbar to automatically attach Bearer JWT tokens to authenticated requests.
+              Current Session: {user ? (
+                <strong style={{ color: 'var(--text-primary)' }}>Logged in as {user.name} ({user.role})</strong>
+              ) : (
+                <span style={{ color: 'var(--text-muted)' }}>Unauthenticated (Guest)</span>
+              )}
             </span>
           </div>
-        )}
+
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button 
+              onClick={() => demoLogin('student')} 
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: '0.78rem' }}
+            >
+              <Sparkles size={13} /> 1-Click Student Auth
+            </button>
+            <button 
+              onClick={() => demoLogin('admin')} 
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: '0.78rem' }}
+            >
+              <ShieldAlert size={13} /> 1-Click Admin Auth
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Explorer Layout */}
@@ -341,8 +395,8 @@ export default function ApiDocsPage() {
                   style={{
                     padding: '0.75rem 1rem',
                     borderBottom: '1px solid var(--border-color)',
-                    background: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
-                    borderLeft: isSelected ? '3px solid var(--accent-primary)' : '3px solid transparent',
+                    background: isSelected ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                    borderLeft: isSelected ? '3px solid var(--text-primary)' : '3px solid transparent',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
@@ -354,8 +408,8 @@ export default function ApiDocsPage() {
                       padding: '0.1rem 0.4rem',
                       borderRadius: '4px',
                       fontFamily: 'var(--font-mono)',
-                      background: ep.method === 'GET' ? 'rgba(16, 185, 129, 0.15)' : ep.method === 'POST' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                      color: ep.method === 'GET' ? '#34d399' : ep.method === 'POST' ? '#60a5fa' : '#fbbf24'
+                      background: ep.method === 'GET' ? 'rgba(255, 255, 255, 0.1)' : ep.method === 'POST' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                      color: 'var(--text-primary)'
                     }}>
                       {ep.method}
                     </span>
@@ -366,7 +420,7 @@ export default function ApiDocsPage() {
                   <div style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.82rem',
-                    color: isSelected ? '#fff' : 'var(--text-secondary)',
+                    color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis'
@@ -391,12 +445,12 @@ export default function ApiDocsPage() {
                   padding: '0.25rem 0.6rem',
                   borderRadius: 'var(--radius-sm)',
                   fontFamily: 'var(--font-mono)',
-                  background: current.method === 'GET' ? 'rgba(16, 185, 129, 0.2)' : current.method === 'POST' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(245, 158, 11, 0.2)',
-                  color: current.method === 'GET' ? '#34d399' : current.method === 'POST' ? '#60a5fa' : '#fbbf24'
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  color: 'var(--text-primary)'
                 }}>
                   {current.method}
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 600, color: '#fff' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {current.path}
                 </span>
               </div>
@@ -430,7 +484,7 @@ export default function ApiDocsPage() {
                     <button
                       onClick={generateFreshEmail}
                       className="btn btn-ghost btn-sm"
-                      style={{ fontSize: '0.75rem', padding: '0.15rem 0.4rem', color: 'var(--accent-cyan)' }}
+                      style={{ fontSize: '0.75rem', padding: '0.15rem 0.4rem', color: 'var(--text-primary)' }}
                     >
                       <RefreshCw size={12} /> Generate Unique Email
                     </button>
@@ -451,7 +505,7 @@ export default function ApiDocsPage() {
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                 Headers: <code>Content-Type: application/json</code>
                 {token && current.auth && (
-                  <span style={{ marginLeft: '0.5rem', color: 'var(--accent-emerald)' }}>
+                  <span style={{ marginLeft: '0.5rem', color: 'var(--text-primary)' }}>
                     • Authorization: Bearer {token.slice(0, 12)}...
                   </span>
                 )}
@@ -464,11 +518,11 @@ export default function ApiDocsPage() {
                 style={{ padding: '0.65rem 1.5rem' }}
               >
                 {requestLoading ? (
-                  <RefreshCw size={16} className="animate-spin" />
+                  <RefreshCw size={16} className="spin" />
                 ) : (
                   <Send size={16} />
                 )}
-                <span>{requestLoading ? 'Executing...' : 'Send Request'}</span>
+                <span>{requestLoading ? 'Executing...' : 'Execute API Call'}</span>
               </button>
             </div>
           </div>
@@ -491,7 +545,7 @@ export default function ApiDocsPage() {
                   className="btn btn-secondary btn-sm"
                   style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
                 >
-                  {copied ? <Check size={13} color="var(--accent-emerald)" /> : <Copy size={13} />}
+                  {copied ? <Check size={13} /> : <Copy size={13} />}
                   <span>{copied ? 'Copied' : 'Copy JSON'}</span>
                 </button>
               </div>
@@ -512,51 +566,6 @@ export default function ApiDocsPage() {
               </pre>
             </div>
           )}
-
-          {/* cURL Equivalent Card */}
-          <div className="card" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
-                <Terminal size={14} /> Equivalent cURL Command:
-              </div>
-              <button
-                onClick={() => {
-                  let cmd = `curl -X ${current.method} "http://localhost:5000${current.path}" \\\n  -H "Content-Type: application/json"`;
-                  if (current.auth && token) {
-                    cmd += ` \\\n  -H "Authorization: Bearer ${token}"`;
-                  }
-                  if (editableBody && (current.method === 'POST' || current.method === 'PUT')) {
-                    cmd += ` \\\n  -d '${editableBody.replace(/\n/g, '')}'`;
-                  }
-                  copySnippet(cmd);
-                }}
-                className="btn btn-ghost btn-sm"
-                style={{ fontSize: '0.75rem' }}
-              >
-                Copy cURL
-              </button>
-            </div>
-
-            <pre style={{
-              background: 'var(--bg-primary)',
-              padding: '0.85rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.8rem',
-              color: '#93c5fd',
-              overflowX: 'auto',
-              border: '1px solid var(--border-color)',
-              margin: 0
-            }}>
-              {`curl -X ${current.method} "http://localhost:5000${current.path}" \\\n  -H "Content-Type: application/json"${
-                current.auth && token ? ` \\\n  -H "Authorization: Bearer ${token.slice(0, 15)}..."` : ''
-              }${
-                editableBody && (current.method === 'POST' || current.method === 'PUT')
-                  ? ` \\\n  -d '${editableBody.replace(/\n\s*/g, ' ')}'`
-                  : ''
-              }`}
-            </pre>
-          </div>
         </div>
       </div>
     </div>

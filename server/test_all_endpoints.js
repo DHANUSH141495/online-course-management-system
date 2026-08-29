@@ -200,11 +200,28 @@ async function runComprehensiveApiAudit() {
 
     // 18. Admin Overview Dashboard Stats
     const adminStats = await makeRequest('GET', '/admin/stats', null, adminToken);
-    console.log(`[20/20] GET /api/admin/stats -> Status ${adminStats.status} (Total Students: ${adminStats.data.stats?.totalStudents}, Enrollments: ${adminStats.data.stats?.totalEnrollments})`);
+    console.log(`[20/23] GET /api/admin/stats -> Status ${adminStats.status} (Total Students: ${adminStats.data.stats?.totalStudents}, Enrollments: ${adminStats.data.stats?.totalEnrollments})`);
     assert(adminStats.status === 200, 'Admin stats failed');
 
+    // 19. Personal Login History & Security Audit
+    const userHistory = await makeRequest('GET', '/auth/login-history', null, studentToken);
+    console.log(`[21/23] GET /api/auth/login-history -> Status ${userHistory.status} (${userHistory.data.logs?.length} recorded sessions)`);
+    assert(userHistory.status === 200, 'User login history failed');
+    assert(Array.isArray(userHistory.data.logs), 'Expected logs array');
+
+    // 20. Admin Full Platform Login & Access Audit Logs
+    const adminLogs = await makeRequest('GET', '/admin/login-logs', null, adminToken);
+    console.log(`[22/23] GET /api/admin/login-logs (Admin) -> Status ${adminLogs.status} (Total Logins: ${adminLogs.data.stats?.totalLogins}, Successful: ${adminLogs.data.stats?.successfulLogins})`);
+    assert(adminLogs.status === 200, 'Admin login logs fetch failed');
+    assert(adminLogs.data.logs?.length > 0, 'Expected populated login audit logs');
+
+    // 21. Authorization Security Check: Student accessing Admin Login Logs must be 403 Forbidden
+    const forbiddenCheck = await makeRequest('GET', '/admin/login-logs', null, studentToken);
+    console.log(`[23/23] GET /api/admin/login-logs (Student RBAC Check) -> Status ${forbiddenCheck.status} (Forbidden Message: "${forbiddenCheck.data.message}")`);
+    assert(forbiddenCheck.status === 403, 'RBAC authorization failed: Student should be forbidden from admin logs');
+
     console.log('\n======================================================');
-    console.log('✅ ALL 20 API ENDPOINTS AUDITED & WORKING 100% PERFECTLY!');
+    console.log('✅ ALL 23 API & AUTH AUDIT ENDPOINTS WORKING 100% PERFECTLY!');
     console.log('======================================================\n');
   } catch (error) {
     console.error('\n❌ Audit Encountered an Issue:', error);

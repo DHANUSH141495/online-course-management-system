@@ -62,6 +62,7 @@ export default function App() {
         activePage={activePage} 
         setActivePage={handlePageChange} 
         onOpenVerifyModal={() => setIsVerifyModalOpen(true)}
+        onOpenLoginHistory={() => handlePageChange(user?.role === 'admin' ? 'admin-dashboard' : 'student-dashboard')}
       />
 
       {/* Main Content View Switcher */}

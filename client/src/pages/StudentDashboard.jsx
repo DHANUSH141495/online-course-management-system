@@ -7,16 +7,19 @@ import {
   Clock, 
   Award, 
   TrendingUp, 
-  ArrowRight, 
   PlayCircle,
   Sparkles,
   Flame,
   LayoutDashboard,
-  GraduationCap,
   Bookmark,
   Zap,
   ShieldCheck,
-  Calendar
+  History,
+  Monitor,
+  Globe,
+  RotateCw,
+  Lock,
+  CheckCircle
 } from 'lucide-react';
 
 export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onExploreCatalog, onOpenExam }) {
@@ -24,7 +27,8 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
   const [enrollments, setEnrollments] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
   const [analytics, setAnalytics] = useState(null);
-  const [dashboardTab, setDashboardTab] = useState('enrolled'); // 'enrolled' | 'badges' | 'exams' | 'wishlist'
+  const [loginHistory, setLoginHistory] = useState([]);
+  const [dashboardTab, setDashboardTab] = useState('enrolled'); // 'enrolled' | 'badges' | 'exams' | 'wishlist' | 'security'
   const [stats, setStats] = useState({
     totalCourses: 0,
     completedCourses: 0,
@@ -32,6 +36,7 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
     averageProgress: 0
   });
   const [loading, setLoading] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
 
   const fetchDashboardData = async () => {
@@ -41,10 +46,11 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
     }
 
     setLoading(true);
-    const [enrollRes, bookRes, analRes] = await Promise.all([
+    const [enrollRes, bookRes, analRes, histRes] = await Promise.all([
       authFetch('/api/enrollments/my'),
       authFetch('/api/courses/my/bookmarks'),
-      authFetch('/api/enrollments/my/analytics')
+      authFetch('/api/enrollments/my/analytics'),
+      authFetch('/api/auth/login-history')
     ]);
 
     if (enrollRes.ok) {
@@ -62,24 +68,42 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
     if (analRes.ok) {
       setAnalytics(analRes.data.analytics || null);
     }
+    if (histRes.ok) {
+      setLoginHistory(histRes.data.logs || []);
+    }
     setLoading(false);
+  };
+
+  const fetchLoginHistoryOnly = async () => {
+    setHistoryLoading(true);
+    const res = await authFetch('/api/auth/login-history');
+    if (res.ok) {
+      setLoginHistory(res.data.logs || []);
+    }
+    setHistoryLoading(false);
   };
 
   useEffect(() => {
     fetchDashboardData();
   }, [user]);
 
+  useEffect(() => {
+    if (dashboardTab === 'security') {
+      fetchLoginHistoryOnly();
+    }
+  }, [dashboardTab]);
+
   if (!user) {
     return (
       <div className="container" style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
         <div className="card" style={{ maxWidth: '500px', margin: '0 auto', padding: '3rem 2rem' }}>
-          <LayoutDashboard size={48} color="var(--accent-primary)" style={{ margin: '0 auto 1rem auto' }} />
+          <LayoutDashboard size={48} style={{ margin: '0 auto 1rem auto', color: 'var(--text-primary)' }} />
           <h2 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>Sign In to View Your Dashboard</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
             Track your enrolled courses, monitor your learning progress, and claim completion certificates.
           </p>
           <button onClick={() => openAuthModal('login')} className="btn btn-primary">
-            Sign In with Demo Account
+            Sign In to Account
           </button>
         </div>
       </div>
@@ -100,13 +124,22 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
     });
   };
 
+  const parseBrowser = (userAgent) => {
+    if (!userAgent) return 'Browser Client';
+    if (userAgent.includes('Chrome') && !userAgent.includes('Edge')) return 'Google Chrome';
+    if (userAgent.includes('Edge')) return 'Microsoft Edge';
+    if (userAgent.includes('Firefox')) return 'Mozilla Firefox';
+    if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Apple Safari';
+    return userAgent.slice(0, 25);
+  };
+
   const getBadgeIcon = (iconName) => {
     switch (iconName) {
-      case 'Award': return <Award size={24} color="#f59e0b" />;
-      case 'CheckCircle2': return <CheckCircle2 size={24} color="#10b981" />;
-      case 'Zap': return <Zap size={24} color="#ec4899" />;
-      case 'BookOpen': return <BookOpen size={24} color="#3b82f6" />;
-      default: return <Sparkles size={24} color="#8b5cf6" />;
+      case 'Award': return <Award size={24} />;
+      case 'CheckCircle2': return <CheckCircle2 size={24} />;
+      case 'Zap': return <Zap size={24} />;
+      case 'BookOpen': return <BookOpen size={24} />;
+      default: return <Sparkles size={24} />;
     }
   };
 
@@ -126,10 +159,10 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
             <h1 style={{ fontSize: '2rem' }}>Welcome, {user.name}! 👋</h1>
-            <span className="badge badge-emerald">Student Profile</span>
+            <span className="badge badge-emerald">Verified {user.role}</span>
           </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            Track learning streaks, completed milestones, and verified credentials.
+            Track learning streaks, completed milestones, verified credentials, and database login activity.
           </p>
         </div>
 
@@ -145,12 +178,13 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
             width: '48px',
             height: '48px',
             borderRadius: 'var(--radius-md)',
-            background: 'rgba(99, 102, 241, 0.15)',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <BookOpen size={24} color="var(--accent-primary)" />
+            <BookOpen size={24} />
           </div>
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>ENROLLED COURSES</span>
@@ -163,12 +197,13 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
             width: '48px',
             height: '48px',
             borderRadius: 'var(--radius-md)',
-            background: 'rgba(245, 158, 11, 0.15)',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Flame size={24} color="var(--accent-amber)" />
+            <Flame size={24} />
           </div>
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>LEARNING STREAK</span>
@@ -181,12 +216,13 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
             width: '48px',
             height: '48px',
             borderRadius: 'var(--radius-md)',
-            background: 'rgba(16, 185, 129, 0.15)',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Award size={24} color="var(--accent-emerald)" />
+            <Award size={24} />
           </div>
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>CERTIFICATES UNLOCKED</span>
@@ -199,12 +235,13 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
             width: '48px',
             height: '48px',
             borderRadius: 'var(--radius-md)',
-            background: 'rgba(6, 182, 212, 0.15)',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Clock size={24} color="var(--accent-cyan)" />
+            <Clock size={24} />
           </div>
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>STUDY TIME LOGGED</span>
@@ -222,32 +259,39 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
         overflowX: 'auto'
       }}>
         <button 
-          className={`btn ${dashboardTab === 'enrolled' ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn ${dashboardTab === 'enrolled' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setDashboardTab('enrolled')}
-          style={{ borderRadius: '0', borderBottom: dashboardTab === 'enrolled' ? '2px solid var(--accent-primary)' : 'none' }}
+          style={{ borderRadius: 'var(--radius-sm)' }}
         >
           <BookOpen size={16} /> My Enrolled Courses ({enrollments.length})
         </button>
         <button 
-          className={`btn ${dashboardTab === 'badges' ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn ${dashboardTab === 'badges' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setDashboardTab('badges')}
-          style={{ borderRadius: '0', borderBottom: dashboardTab === 'badges' ? '2px solid var(--accent-primary)' : 'none' }}
+          style={{ borderRadius: 'var(--radius-sm)' }}
         >
-          <Sparkles size={16} /> Skill Badges & Achievements ({analytics?.achievements?.length || 0})
+          <Sparkles size={16} /> Skill Badges ({analytics?.achievements?.length || 0})
         </button>
         <button 
-          className={`btn ${dashboardTab === 'exams' ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn ${dashboardTab === 'exams' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setDashboardTab('exams')}
-          style={{ borderRadius: '0', borderBottom: dashboardTab === 'exams' ? '2px solid var(--accent-primary)' : 'none' }}
+          style={{ borderRadius: 'var(--radius-sm)' }}
         >
-          <Award size={16} /> Exam & Certification Records ({analytics?.exams?.length || 0})
+          <Award size={16} /> Exam & Certifications ({analytics?.exams?.length || 0})
         </button>
         <button 
-          className={`btn ${dashboardTab === 'wishlist' ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn ${dashboardTab === 'wishlist' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setDashboardTab('wishlist')}
-          style={{ borderRadius: '0', borderBottom: dashboardTab === 'wishlist' ? '2px solid var(--accent-primary)' : 'none' }}
+          style={{ borderRadius: 'var(--radius-sm)' }}
         >
-          <Bookmark size={16} /> Saved Wishlist ({bookmarks.length})
+          <Bookmark size={16} /> Wishlist ({bookmarks.length})
+        </button>
+        <button 
+          className={`btn ${dashboardTab === 'security' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setDashboardTab('security')}
+          style={{ borderRadius: 'var(--radius-sm)' }}
+        >
+          <History size={16} /> Login History & Security ({loginHistory.length})
         </button>
       </div>
 
@@ -260,7 +304,7 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
             </div>
           ) : enrollments.length === 0 ? (
             <div className="card" style={{ textAlign: 'center', padding: '3.5rem 2rem' }}>
-              <BookOpen size={48} color="var(--accent-primary)" style={{ margin: '0 auto 1rem auto', opacity: 0.5 }} />
+              <BookOpen size={48} style={{ margin: '0 auto 1rem auto', opacity: 0.5 }} />
               <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>You Haven't Enrolled in Any Courses Yet</h3>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
                 Explore our catalog of industry courses, enroll in seconds, and begin learning.
@@ -287,7 +331,7 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                     />
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <span className="badge badge-indigo">{item.category_name}</span>
+                      <span className="badge">{item.category_name}</span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.duration}</span>
                     </div>
 
@@ -301,7 +345,7 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                     <div style={{ marginBottom: '1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.35rem' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Progress</span>
-                        <strong style={{ color: item.progress_percent === 100 ? 'var(--accent-emerald)' : '#fff' }}>
+                        <strong style={{ color: 'var(--text-primary)' }}>
                           {item.progress_percent}% ({item.completed_lessons}/{item.total_lessons} lessons)
                         </strong>
                       </div>
@@ -325,7 +369,7 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                         className="btn btn-secondary btn-sm"
                         title="View Certificate"
                       >
-                        <Award size={15} color="var(--accent-emerald)" />
+                        <Award size={15} />
                       </button>
                     )}
                   </div>
@@ -347,13 +391,13 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '1rem',
-                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                  border: '1px solid var(--border-color)'
                 }}>
                   <div style={{
                     width: 50,
                     height: 50,
                     borderRadius: 'var(--radius-lg)',
-                    background: 'rgba(255, 255, 255, 0.06)',
+                    background: 'rgba(255, 255, 255, 0.08)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -362,7 +406,7 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                     {getBadgeIcon(ach.icon)}
                   </div>
                   <div>
-                    <span className="badge badge-amber" style={{ fontSize: '0.7rem', marginBottom: '0.3rem' }}>
+                    <span className="badge" style={{ fontSize: '0.7rem', marginBottom: '0.3rem' }}>
                       Unlocked Milestone
                     </span>
                     <h4 style={{ fontSize: '1.05rem', fontWeight: 'bold', color: '#fff', marginBottom: '0.25rem' }}>
@@ -396,10 +440,10 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
                       </span>
                     </div>
                     <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      Score: <strong style={{ color: exam.passed ? 'var(--accent-emerald)' : 'var(--accent-rose)' }}>{exam.score_percent}%</strong> ({exam.correct_answers}/{exam.total_questions} correct) • Proctor Status: {exam.proctor_status}
+                      Score: <strong style={{ color: 'var(--text-primary)' }}>{exam.score_percent}%</strong> ({exam.correct_answers}/{exam.total_questions} correct) • Proctor Status: {exam.proctor_status}
                     </div>
                     {exam.certificate_code && (
-                      <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontFamily: 'monospace', marginTop: '0.3rem' }}>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontFamily: 'monospace', marginTop: '0.3rem' }}>
                         Verification Code: {exam.certificate_code}
                       </div>
                     )}
@@ -442,6 +486,116 @@ export default function StudentDashboard({ onOpenCourse, onOpenLearningRoom, onE
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Tab 5: Login History & Security */}
+      {dashboardTab === 'security' && (
+        <div>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '1.25rem',
+            flexWrap: 'wrap',
+            gap: '1rem'
+          }}>
+            <div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.2rem' }}>Personal Sign-In & Security Timeline</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                Every login session with your credentials is encrypted and logged into the platform database for your security.
+              </p>
+            </div>
+
+            <button 
+              onClick={fetchLoginHistoryOnly}
+              disabled={historyLoading}
+              className="btn btn-secondary btn-sm"
+            >
+              <RotateCw size={14} className={historyLoading ? 'spin' : ''} /> Refresh History
+            </button>
+          </div>
+
+          <div style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--radius-lg)',
+            overflowX: 'auto'
+          }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+              <thead>
+                <tr style={{ background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid var(--border-color)' }}>
+                  <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600 }}>Login Event</th>
+                  <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600 }}>Account Email</th>
+                  <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600 }}>IP Address</th>
+                  <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600 }}>Browser / Device</th>
+                  <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600 }}>Status</th>
+                  <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Time Logged</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loginHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                      No sign-in records found.
+                    </td>
+                  </tr>
+                ) : (
+                  loginHistory.map((log, idx) => (
+                    <tr key={log.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '1rem 1.25rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <ShieldCheck size={16} />
+                          <div>
+                            <span style={{ fontWeight: 600 }}>{idx === 0 ? 'Current Session' : 'Past Sign-In'}</span>
+                            {idx === 0 && (
+                              <span className="badge badge-emerald" style={{ marginLeft: '0.5rem', fontSize: '0.625rem' }}>
+                                Active
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+
+                      <td style={{ padding: '1rem 1.25rem', color: 'var(--text-secondary)' }}>
+                        {log.email}
+                      </td>
+
+                      <td style={{ padding: '1rem 1.25rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+                          <Globe size={13} color="var(--text-muted)" />
+                          <span>{log.ip_address || '127.0.0.1'}</span>
+                        </div>
+                      </td>
+
+                      <td style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <Monitor size={13} />
+                          <span>{parseBrowser(log.user_agent)}</span>
+                        </div>
+                      </td>
+
+                      <td style={{ padding: '1rem 1.25rem' }}>
+                        {log.status === 'success' ? (
+                          <span className="badge badge-emerald" style={{ fontSize: '0.7rem' }}>
+                            <CheckCircle size={11} /> SUCCESS
+                          </span>
+                        ) : (
+                          <span className="badge badge-rose" style={{ fontSize: '0.7rem' }}>
+                            FAILED
+                          </span>
+                        )}
+                      </td>
+
+                      <td style={{ padding: '1rem 1.25rem', textAlign: 'right', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                        {new Date(log.login_at).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

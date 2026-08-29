@@ -10,5 +10,7 @@ router.get('/stats', adminController.getAdminStats);
 router.get('/enrollments', adminController.getAllEnrollments);
 router.get('/users', adminController.getAllUsers);
 router.put('/users/:id/role', adminController.updateUserRole);
+router.get('/login-logs', adminController.getLoginLogs);
+router.delete('/login-logs', adminController.clearLoginLogs);
 
 module.exports = router;

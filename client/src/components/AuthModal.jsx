@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { X, Lock, Mail, User, ShieldCheck, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { X, Lock, Mail, User, ShieldCheck, Sparkles, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 
 export default function AuthModal() {
   const { 
@@ -95,11 +95,11 @@ export default function AuthModal() {
               padding: '0.55rem',
               borderRadius: 'var(--radius-sm)',
               border: 'none',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '0.9rem',
               cursor: 'pointer',
               background: authModalTab === 'login' ? 'var(--bg-tertiary)' : 'transparent',
-              color: authModalTab === 'login' ? '#ffffff' : 'var(--text-muted)',
+              color: authModalTab === 'login' ? 'var(--text-primary)' : 'var(--text-muted)',
               transition: 'all 0.2s ease'
             }}
           >
@@ -113,11 +113,11 @@ export default function AuthModal() {
               padding: '0.55rem',
               borderRadius: 'var(--radius-sm)',
               border: 'none',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '0.9rem',
               cursor: 'pointer',
               background: authModalTab === 'register' ? 'var(--bg-tertiary)' : 'transparent',
-              color: authModalTab === 'register' ? '#ffffff' : 'var(--text-muted)',
+              color: authModalTab === 'register' ? 'var(--text-primary)' : 'var(--text-muted)',
               transition: 'all 0.2s ease'
             }}
           >
@@ -132,7 +132,7 @@ export default function AuthModal() {
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             {authModalTab === 'login'
-              ? 'Access your enrolled courses and learning milestones.'
+              ? 'Access your enrolled courses, learning milestones, and certificates.'
               : 'Start learning industry-ready skills with full progress tracking.'}
           </p>
         </div>
@@ -140,14 +140,14 @@ export default function AuthModal() {
         {/* Demo Fast Autofill Badges */}
         {authModalTab === 'login' && (
           <div style={{
-            background: 'rgba(99, 102, 241, 0.08)',
-            border: '1px dashed rgba(99, 102, 241, 0.3)',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px dashed var(--border-highlight)',
             borderRadius: 'var(--radius-md)',
             padding: '0.75rem',
             marginBottom: '1.25rem'
           }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#a5b4fc', display: 'block', marginBottom: '0.4rem' }}>
-              ⚡ Fast Demo Autofill:
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
+              ⚡ 1-Click Credentials Autofill:
             </span>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
@@ -156,7 +156,7 @@ export default function AuthModal() {
                 className="btn btn-secondary btn-sm"
                 style={{ flex: 1, fontSize: '0.78rem' }}
               >
-                <Sparkles size={13} color="var(--accent-emerald)" /> Dhanush (Student)
+                <Sparkles size={13} /> Dhanush (Student)
               </button>
               <button
                 type="button"
@@ -164,7 +164,7 @@ export default function AuthModal() {
                 className="btn btn-secondary btn-sm"
                 style={{ flex: 1, fontSize: '0.78rem' }}
               >
-                <ShieldCheck size={13} color="var(--accent-rose)" /> Admin Portal
+                <ShieldAlert size={13} /> Admin Portal
               </button>
             </div>
           </div>
@@ -173,9 +173,9 @@ export default function AuthModal() {
         {/* Error Alert */}
         {errorMsg && (
           <div style={{
-            background: 'rgba(244, 63, 94, 0.15)',
+            background: 'rgba(244, 63, 94, 0.12)',
             border: '1px solid rgba(244, 63, 94, 0.3)',
-            color: '#fb7185',
+            color: '#fecdd3',
             padding: '0.65rem 0.9rem',
             borderRadius: 'var(--radius-md)',
             fontSize: '0.85rem',
@@ -263,11 +263,12 @@ export default function AuthModal() {
                   alignItems: 'center',
                   gap: '0.5rem',
                   padding: '0.65rem 0.85rem',
-                  background: role === 'student' ? 'rgba(99, 102, 241, 0.15)' : 'var(--bg-primary)',
-                  border: `1px solid ${role === 'student' ? 'var(--accent-primary)' : 'var(--border-color)'}`,
+                  background: role === 'student' ? 'rgba(255, 255, 255, 0.1)' : 'var(--bg-primary)',
+                  border: `1px solid ${role === 'student' ? 'var(--text-primary)' : 'var(--border-color)'}`,
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  color: 'var(--text-primary)'
                 }}>
                   <input
                     type="radio"
@@ -285,11 +286,12 @@ export default function AuthModal() {
                   alignItems: 'center',
                   gap: '0.5rem',
                   padding: '0.65rem 0.85rem',
-                  background: role === 'admin' ? 'rgba(244, 63, 94, 0.15)' : 'var(--bg-primary)',
-                  border: `1px solid ${role === 'admin' ? 'var(--accent-rose)' : 'var(--border-color)'}`,
+                  background: role === 'admin' ? 'rgba(255, 255, 255, 0.1)' : 'var(--bg-primary)',
+                  border: `1px solid ${role === 'admin' ? 'var(--text-primary)' : 'var(--border-color)'}`,
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  color: 'var(--text-primary)'
                 }}>
                   <input
                     type="radio"
@@ -298,7 +300,7 @@ export default function AuthModal() {
                     checked={role === 'admin'}
                     onChange={() => setRole('admin')}
                   />
-                  <span>Admin / Instructor</span>
+                  <span>Admin / Staff</span>
                 </label>
               </div>
             </div>

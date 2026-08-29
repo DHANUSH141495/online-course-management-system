@@ -298,9 +298,7 @@ export default function ExamProctorRoom({ courseId, onBack }) {
 
   return (
     <div style={{ minHeight: 'calc(100vh - 72px)', background: '#05070c', color: '#fff' }}>
-      {/* ======================================================== */}
-      {/* 1. PRE-EXAM INSTRUCTIONS SCREEN */}
-      {/* ======================================================== */}
+      {/* Pre-exam instructions screen */}
       {examState === 'instructions' && (
         <div className="container" style={{ maxWidth: '800px', padding: '3.5rem 1.5rem' }}>
           <button onClick={onBack} className="btn btn-secondary btn-sm" style={{ marginBottom: '1.5rem' }}>
@@ -392,9 +390,7 @@ export default function ExamProctorRoom({ courseId, onBack }) {
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* 2. ACTIVE PROCTORED EXAM SCREEN */}
-      {/* ======================================================== */}
+      {/* Active proctored exam screen */}
       {examState === 'active' && (
         <div>
           {/* Top Exam Status Bar */}
@@ -654,9 +650,7 @@ export default function ExamProctorRoom({ courseId, onBack }) {
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* 3. EXAM RESULTS & CERTIFICATE SCREEN */}
-      {/* ======================================================== */}
+      {/* Exam results & certificate screen */}
       {examState === 'results' && submissionResult && (
         <div className="container" style={{ maxWidth: '750px', padding: '4rem 1.5rem' }}>
           <div className="card" style={{ padding: '2.5rem', textAlign: 'center' }}>
@@ -742,9 +736,7 @@ export default function ExamProctorRoom({ courseId, onBack }) {
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* 4. MALPRACTICE VIOLATION POPUP MODAL */}
-      {/* ======================================================== */}
+      {/* Malpractice violation warning popup */}
       {isWarningModalOpen && (
         <div style={{
           position: 'fixed',

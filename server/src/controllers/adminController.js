@@ -177,3 +177,91 @@ exports.updateUserRole = (req, res) => {
     });
   }
 };
+
+// GET /api/admin/login-logs (Real-time DB Login & Access Audit Viewer)
+exports.getLoginLogs = (req, res) => {
+  try {
+    const { search = '', status = 'all', role = 'all', limit = 100 } = req.query;
+
+    let query = `
+      SELECT 
+        l.id,
+        l.user_id,
+        l.email,
+        l.user_name,
+        l.role,
+        l.ip_address,
+        l.user_agent,
+        l.status,
+        l.login_at,
+        u.avatar AS user_avatar
+      FROM login_logs l
+      LEFT JOIN users u ON l.user_id = u.id
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (search && search.trim()) {
+      const s = `%${search.trim().toLowerCase()}%`;
+      query += ` AND (LOWER(l.email) LIKE ? OR LOWER(l.user_name) LIKE ? OR LOWER(l.ip_address) LIKE ? OR LOWER(l.user_agent) LIKE ?)`;
+      params.push(s, s, s, s);
+    }
+
+    if (status && status !== 'all') {
+      query += ` AND l.status = ?`;
+      params.push(status);
+    }
+
+    if (role && role !== 'all') {
+      query += ` AND l.role = ?`;
+      params.push(role);
+    }
+
+    query += ` ORDER BY l.login_at DESC LIMIT ?`;
+    params.push(parseInt(limit, 10) || 100);
+
+    const logs = db.prepare(query).all(...params);
+
+    // Compute log metrics
+    const totalLogins = db.prepare("SELECT COUNT(*) AS count FROM login_logs").get().count;
+    const successfulLogins = db.prepare("SELECT COUNT(*) AS count FROM login_logs WHERE status = 'success'").get().count;
+    const failedLogins = db.prepare("SELECT COUNT(*) AS count FROM login_logs WHERE status = 'failed'").get().count;
+    const uniqueUsersCount = db.prepare("SELECT COUNT(DISTINCT email) AS count FROM login_logs WHERE status = 'success'").get().count;
+
+    return res.json({
+      success: true,
+      count: logs.length,
+      stats: {
+        totalLogins,
+        successfulLogins,
+        failedLogins,
+        uniqueUsersCount
+      },
+      logs
+    });
+  } catch (error) {
+    console.error('GetLoginLogs Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve login audit logs.'
+    });
+  }
+};
+
+// DELETE /api/admin/login-logs (Clear or prune old logs)
+exports.clearLoginLogs = (req, res) => {
+  try {
+    db.prepare("DELETE FROM login_logs").run();
+    return res.json({
+      success: true,
+      message: 'All login audit records have been cleared.'
+    });
+  } catch (error) {
+    console.error('ClearLoginLogs Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to clear login logs.'
+    });
+  }
+};
+

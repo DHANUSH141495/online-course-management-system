@@ -3,6 +3,18 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET } = require('../middleware/auth');
 
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.socket?.remoteAddress || req.ip || '127.0.0.1';
+}
+
+function getUserAgent(req) {
+  return req.headers['user-agent'] || 'Unknown Browser';
+}
+
 // POST /api/auth/register
 exports.register = (req, res) => {
   try {
@@ -59,6 +71,16 @@ exports.register = (req, res) => {
       avatar
     };
 
+    // Record initial registration login log in database
+    try {
+      db.prepare(`
+        INSERT INTO login_logs (user_id, email, user_name, role, ip_address, user_agent, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'success')
+      `).run(user.id, user.email, user.name, user.role, getClientIp(req), getUserAgent(req));
+    } catch (logErr) {
+      console.error('Failed to record register login log:', logErr);
+    }
+
     // Generate token
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, name: user.name },
@@ -85,6 +107,8 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
   try {
     const { email, password } = req.body;
+    const ip = getClientIp(req);
+    const userAgent = getUserAgent(req);
 
     if (!email || !password) {
       return res.status(400).json({
@@ -95,6 +119,16 @@ exports.login = (req, res) => {
 
     const user = db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email.trim());
     if (!user) {
+      // Record failed attempt in database
+      try {
+        db.prepare(`
+          INSERT INTO login_logs (user_id, email, user_name, role, ip_address, user_agent, status)
+          VALUES (?, ?, ?, ?, ?, ?, 'failed')
+        `).run(null, email.trim().toLowerCase(), 'Unknown', 'student', ip, userAgent);
+      } catch (logErr) {
+        console.error('Failed to log failed attempt:', logErr);
+      }
+
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password.'
@@ -103,10 +137,30 @@ exports.login = (req, res) => {
 
     const isMatch = bcrypt.compareSync(password, user.password_hash);
     if (!isMatch) {
+      // Record failed attempt for known user
+      try {
+        db.prepare(`
+          INSERT INTO login_logs (user_id, email, user_name, role, ip_address, user_agent, status)
+          VALUES (?, ?, ?, ?, ?, ?, 'failed')
+        `).run(user.id, user.email, user.name, user.role, ip, userAgent);
+      } catch (logErr) {
+        console.error('Failed to log failed attempt:', logErr);
+      }
+
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password.'
       });
+    }
+
+    // Record successful login in database
+    try {
+      db.prepare(`
+        INSERT INTO login_logs (user_id, email, user_name, role, ip_address, user_agent, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'success')
+      `).run(user.id, user.email, user.name, user.role, ip, userAgent);
+    } catch (logErr) {
+      console.error('Failed to log successful login:', logErr);
     }
 
     const userProfile = {
@@ -167,3 +221,29 @@ exports.getMe = (req, res) => {
     });
   }
 };
+
+// GET /api/auth/login-history (Current user personal login audit history)
+exports.getLoginHistory = (req, res) => {
+  try {
+    const logs = db.prepare(`
+      SELECT id, email, user_name, role, ip_address, user_agent, status, login_at
+      FROM login_logs
+      WHERE user_id = ? OR LOWER(email) = LOWER(?)
+      ORDER BY login_at DESC
+      LIMIT 50
+    `).all(req.user.id, req.user.email);
+
+    return res.json({
+      success: true,
+      count: logs.length,
+      logs
+    });
+  } catch (error) {
+    console.error('GetLoginHistory Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve personal login history.'
+    });
+  }
+};
+
