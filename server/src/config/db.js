@@ -803,6 +803,20 @@ function seedAchievementsAndLogs() {
     insertLoginLog.run(1, 'dhanush@gmail.com', 'Dhanush', 'student', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Edge/128.0.0.0', 'success', '-2 hours');
     insertLoginLog.run(3, 'admin@coursify.com', 'Admin Master', 'admin', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Edge/128.0.0.0', 'success', '-15 minutes');
   }
+
+  // Seed sample verified exam submissions & certificates if empty
+  const subCount = db.prepare('SELECT COUNT(*) AS count FROM exam_submissions').get().count;
+  if (subCount === 0) {
+    console.log('📜 Seeding verified student certificates...');
+    const insertSub = db.prepare(`
+      INSERT INTO exam_submissions (user_id, course_id, score_percent, correct_answers, total_questions, passed, warnings_count, proctor_status, certificate_code, answers_json, submitted_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATETIME('now', ?))
+    `);
+
+    insertSub.run(1, 1, 100, 5, 5, 1, 0, 'clean', 'CERT-DHANUSH-11-8178', '{"q1":"B","q2":"A","q3":"C","q4":"D","q5":"A"}', '-3 days');
+    insertSub.run(1, 2, 90, 5, 5, 1, 0, 'clean', 'CERT-DHANUSH-11-7895', '{"q1":"A","q2":"B","q3":"A","q4":"C","q5":"D"}', '-1 days');
+    insertSub.run(2, 3, 95, 5, 5, 1, 0, 'clean', 'CERT-JOHNDOE-32-4912', '{"q1":"C","q2":"A","q3":"D","q4":"B","q5":"A"}', '-5 days');
+  }
 }
 
 // Execute schema creation & seeding
